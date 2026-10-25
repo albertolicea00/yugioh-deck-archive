@@ -7,14 +7,14 @@ Collection of Yu-Gi-Oh! video game decks in `.ydk` format, organized by platform
 | Platform | Console | Decks | Done | Progress | Tested |
 |----------|---------|-------|------|----------|--------|
 | PSP | PlayStation Portable | 82 | 0 | 0% | 0 |
-| GBA | Game Boy Advance | 58 | 0 | 0% | 0 |
+| GBA | Game Boy Advance | 53 | 0 | 0% | 0 |
 | DS | Nintendo DS | 46 | 0 | 0% | 0 |
 | Multi | PC / Switch / PS4 / Xbox | 23 | 0 | 0% | 0 |
 | PS2 | PlayStation 2 | 16 | 0 | 0% | 0 |
 | PS1 | PlayStation 1 | 13 | 0 | 0% | 0 |
 | Mobile | iOS / Android | 12 | 0 | 0% | 0 |
 | 3DS | Nintendo 3DS | 11 | 0 | 0% | 0 |
-| **Total** | | **261** | **0** | **0%** | **0** |
+| **Total** | | **256** | **0** | **0%** | **0** |
 
 ## Structure
 
