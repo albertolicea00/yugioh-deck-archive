@@ -1,0 +1,16 @@
+# Workspace
+.workspace/
+
+# Assets (not ready yet)
+assets/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
