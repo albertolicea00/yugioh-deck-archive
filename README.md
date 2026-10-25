@@ -36,11 +36,18 @@ Each `.ydk` file follows the standard YGOPro deck format:
 <card passcodes>
 ```
 
-See [decks/README.md](./decks/README.md) for the full index with links to every deck.
+## Documentation
+
+- [decks/README.md](./decks/README.md) — Full index with links to every deck
+- [ARCHITECTURE.md](./ARCHITECTURE.md) — Deck file formats (YDK, JSON, YDOG, COD, etc.), passcode system, APIs and conversion
+- [CHANGELOG.md](./CHANGELOG.md) — Version history
 
 ## Sources
 
 - [YGOPRODeck](https://ygoprodeck.com/) — Community-uploaded decks with downloadable YDK files
-- [Yugipedia - Deck Recipes](https://yugipedia.com/wiki/Deck_Recipes) — Complete character deck recipes per game with card names
-- [Yugipedia - Forbidden Memories Card List](https://yugipedia.com/wiki/Yu-Gi-Oh!_Forbidden_Memories:_Card_List) — Full 722-card database with passcodes
+- [YGOPRODeck API](https://db.ygoprodeck.com/api/v7/cardinfo.php) — Card data, images, passcodes
+- [Yugipedia - Deck Recipes](https://yugipedia.com/wiki/Deck_Recipes) — Complete character deck recipes per game
+- [Yugipedia - Forbidden Memories Card List](https://yugipedia.com/wiki/Yu-Gi-Oh!_Forbidden_Memories:_Card_List) — Full 722-card database
 - [Yu-Gi-Oh! Fandom Wiki](https://yugioh.fandom.com/) — Character pages with deck lists per game
+- [YGOJSON](https://github.com/iconmaster5326/YGOJSON) — Machine-readable JSON card database
+- [Konami Card Database](https://www.db.yugioh-card.com/) — Official card database with rulings
