@@ -54,6 +54,10 @@ Both have interactive menus. Run without arguments to use.
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — Deck file formats, passcode system, Konami apps, APIs and conversion
 - [CHANGELOG.md](./CHANGELOG.md) — Version history
 
+## Related Project
+
+[Project Kaiba](https://github.com/albertolicea00/ProjectKaiba) — My personal, fan-made Yu-Gi-Oh! game for mobile, built for offline duels and playing with friends.
+
 ## Sources
 
 - [YGOPRODeck](https://ygoprodeck.com/) — Community-uploaded decks with downloadable YDK files
