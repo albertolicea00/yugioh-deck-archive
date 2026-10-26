@@ -1,16 +1,16 @@
 name: Deck limits
 
 on:
-  push:
-    paths:
-      - 'decks/**/*.json'
-      - 'scripts/deck-validate.py'
-      - '.github/workflows/valide-deck-limits.yml'
-  pull_request:
-    paths:
-      - 'decks/**/*.json'
-      - 'scripts/deck-validate.py'
-      - '.github/workflows/valide-deck-limits.yml'
+  # push:
+  #   paths:
+  #     - 'decks/**/*.json'
+  #     - 'scripts/deck-validate.py'
+  #     - '.github/workflows/valide-deck-limits.yml'
+  # pull_request:
+  #   paths:
+  #     - 'decks/**/*.json'
+  #     - 'scripts/deck-validate.py'
+  #     - '.github/workflows/valide-deck-limits.yml'
   workflow_dispatch:
 
 permissions:

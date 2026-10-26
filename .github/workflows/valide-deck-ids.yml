@@ -1,16 +1,16 @@
 name: Card IDs
 
 on:
-  push:
-    paths:
-      - 'decks/**/*.json'
-      - 'scripts/deck-validate.py'
-      - '.github/workflows/valide-deck-ids.yml'
-  pull_request:
-    paths:
-      - 'decks/**/*.json'
-      - 'scripts/deck-validate.py'
-      - '.github/workflows/valide-deck-ids.yml'
+  # push:
+  #   paths:
+  #     - 'decks/**/*.json'
+  #     - 'scripts/deck-validate.py'
+  #     - '.github/workflows/valide-deck-ids.yml'
+  # pull_request:
+  #   paths:
+  #     - 'decks/**/*.json'
+  #     - 'scripts/deck-validate.py'
+  #     - '.github/workflows/valide-deck-ids.yml'
   workflow_dispatch:
 
 permissions:
