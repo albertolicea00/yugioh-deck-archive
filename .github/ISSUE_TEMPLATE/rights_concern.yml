@@ -1,0 +1,30 @@
+name: Rights or attribution concern
+description: Report a copyright, trademark, licensing, or attribution concern.
+title: '[Rights] '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This form creates a public issue. Do not include private contact details, confidential documents, or identity documents.
+        See the [Legal Notice](https://github.com/albertolicea00/yugioh-deck-archive/blob/main/LEGAL_NOTICE.md).
+        For a formal copyright complaint, use [GitHub's copyright complaint process](https://docs.github.com/en/site-policy/content-removal-policies/guide-to-submitting-a-dmca-takedown-notice).
+  - type: textarea
+    id: material
+    attributes:
+      label: Affected files or URLs
+      description: Identify the specific material in this repository.
+    validations:
+      required: true
+  - type: textarea
+    id: concern
+    attributes:
+      label: Rights or attribution concern
+      description: Describe the concern and relevant rights or license. If representing a rights holder, state that role without posting confidential evidence.
+    validations:
+      required: true
+  - type: textarea
+    id: resolution
+    attributes:
+      label: Requested correction or removal
+    validations:
+      required: true

@@ -1,0 +1,41 @@
+name: Deck addition or correction
+description: Request a missing deck or report an inaccurate recipe.
+title: '[Deck] '
+body:
+  - type: dropdown
+    id: request
+    attributes:
+      label: Request type
+      options:
+        - Add a missing deck
+        - Correct an existing deck
+        - Identify or verify a placeholder
+    validations:
+      required: true
+  - type: input
+    id: origin
+    attributes:
+      label: Game or TV series
+      description: Include platform, game version, or series and episode when known.
+    validations:
+      required: true
+  - type: input
+    id: deck
+    attributes:
+      label: Character, variant, or existing deck path
+    validations:
+      required: true
+  - type: textarea
+    id: changes
+    attributes:
+      label: Deck details or corrections
+      description: Describe cards, copies, sections, and what is confirmed versus inferred. Mention special rules or substitutions.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources
+      description: Link a deck recipe, reference page, or episode timestamp. If no source is available, explain what still needs verification. Do not upload copyrighted assets without permission.
+    validations:
+      required: true

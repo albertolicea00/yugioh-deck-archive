@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Contribution guide
+    url: https://github.com/albertolicea00/yugioh-deck-archive/blob/main/CONTRIBUTING.md
+    about: Read the deck conventions, checks, and contribution guidelines.
+  - name: Legal notice and license scope
+    url: https://github.com/albertolicea00/yugioh-deck-archive/blob/main/LEGAL_NOTICE.md
+    about: Original code licensing and third-party intellectual property.
