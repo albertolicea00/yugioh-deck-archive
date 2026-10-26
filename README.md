@@ -61,6 +61,16 @@ Both have interactive menus. Run without arguments to use.
 
 [Project Kaiba](https://github.com/albertolicea00/ProjectKaiba) — My personal, fan-made Yu-Gi-Oh! game for mobile, built for offline duels and playing with friends.
 
+## Contributing and Community
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for deck conventions, sources, validation, and pull requests. Please follow the [Code of Conduct](./CODE_OF_CONDUCT.md). Use the repository's issue forms to report bugs, suggest features, request deck changes, or raise rights concerns.
+
+## License and Legal Notice
+
+Original code and original documentation are licensed under the [MIT License](./LICENSE). Third-party artwork, images, logos, trademarks, card text, and other Yu-Gi-Oh! material are excluded and remain the property of Konami and their respective rights holders. No license to third-party rights in sourced deck recipes is granted here.
+
+This is an unofficial fan project, not affiliated with or endorsed by Konami. See [LEGAL_NOTICE.md](./LEGAL_NOTICE.md) for the full scope and rights reporting process.
+
 ## Sources
 
 - [YGOPRODeck](https://ygoprodeck.com/) — Community-uploaded decks with downloadable YDK files
