@@ -6,16 +6,16 @@ Manage, explore, and preserve Yu-Gi-Oh! decks from video games and TV series. De
 
 | Platform | Console | Decks | Done | Progress | Tested |
 |----------|---------|-------|------|----------|--------|
-| TV | Anime Series | 118 | 0 | 0% | 0 |
-| PSP | PlayStation Portable | 82 | 0 | 0% | 0 |
-| GBA | Game Boy Advance | 53 | 0 | 0% | 0 |
-| DS | Nintendo DS | 46 | 0 | 0% | 0 |
-| Multi | PC / Switch / PS4 / Xbox | 23 | 0 | 0% | 0 |
-| PS2 | PlayStation 2 | 16 | 0 | 0% | 0 |
-| PS1 | PlayStation 1 | 13 | 0 | 0% | 0 |
-| Mobile | iOS / Android | 12 | 0 | 0% | 0 |
 | 3DS | Nintendo 3DS | 11 | 0 | 0% | 0 |
-| **Total** | | **374** | **0** | **0%** | **0** |
+| DS | Nintendo DS | 67 | 0 | 0% | 0 |
+| GBA | Game Boy Advance | 91 | 0 | 0% | 0 |
+| Mobile | iOS / Android | 12 | 0 | 0% | 0 |
+| Multi | PC / Switch / PS4 / Xbox | 119 | 0 | 0% | 0 |
+| PS1 | PlayStation 1 | 13 | 0 | 0% | 0 |
+| PS2 | PlayStation 2 | 16 | 0 | 0% | 0 |
+| PSP | PlayStation Portable | 146 | 0 | 0% | 0 |
+| TV | Anime Series | 118 | 0 | 0% | 0 |
+| **Total** | | **593** | **0** | **0%** | **0** |
 
 ## Structure
 
