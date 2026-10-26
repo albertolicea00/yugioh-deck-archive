@@ -24,7 +24,7 @@ The standard deck format used by most simulators.
 - Sections: `#main`, `#extra`, `!side`
 - First line `#created by` is optional metadata
 - Used by: [YGOPro](https://github.com/Fluorohydride/ygopro), [EDOPro](https://projectignis.github.io/), [Dueling Nexus](https://duelingnexus.com/), [Dueling Book](https://www.duelingbook.com/)
-- This project uses YDK as its primary format
+- Generated from JSON via `scripts/deck-convert.py`
 
 ### YDKE
 
@@ -61,7 +61,8 @@ Structured format with card metadata.
 ```
 
 - Machine-readable, easy to parse programmatically
-- Often includes card names, types, and other metadata alongside passcodes
+- **This project uses JSON as its source of truth** — all decks stored as `.json`
+- Other formats generated via `scripts/deck-convert.py` and gitignored
 - Used by: [YGOPRODeck API](https://ygoprodeck.com/api-guide/), custom tools
 - YGOPRODeck API endpoint: `https://db.ygoprodeck.com/api/v7/cardinfo.php`
 
@@ -132,12 +133,7 @@ Example passcodes:
 
 ## Converting Between Formats
 
-Since all formats reference the same passcodes, conversion is lossless:
-
-- **YDK → JSON**: Parse lines, wrap in JSON structure
-- **JSON → YDK**: Extract passcode arrays, write one per line
-- **TXT → YDK**: Look up card names → passcodes via [YGOPRODeck API](https://db.ygoprodeck.com/api/v7/cardinfo.php?name=Blue-Eyes%20White%20Dragon)
-- **YDK → TXT**: Look up passcodes → card names via [YGOPRODeck API](https://db.ygoprodeck.com/api/v7/cardinfo.php?id=89631139)
+All formats reference the same passcodes, so conversion is lossless. TXT and COD require resolving passcodes to card names via [YGOPRODeck API](https://db.ygoprodeck.com/api/v7/cardinfo.php).
 
 ## Official Konami Apps & Games
 
