@@ -1,6 +1,6 @@
 # Yu-Gi-Oh! Deck Archive
 
-Collection of Yu-Gi-Oh! video game decks in `.ydk` format, organized by platform and game.
+Manage, explore, and preserve Yu-Gi-Oh! decks from video games and TV series. Decks stored in `.json` format, organized by platform and game.
 
 ## Platforms
 
@@ -21,25 +21,37 @@ Collection of Yu-Gi-Oh! video game decks in `.ydk` format, organized by platform
 ```
 decks/
 ├── [Platform] Game/
-│   ├── [Platform] Game - Character.ydk
-│   └── [Platform] Game - Boss Card - Deck Name.ydk
+│   ├── [Platform] Game - Character.json
+│   └── [Platform] Game - Opponent - Deck Name.json
+scripts/
+├── deck-convert.py    # Format converter (JSON ↔ YDK, YDKE, TXT, COD)
+└── deck-validate.py   # Deck validator (structure, limits, card IDs)
 ```
 
-Each `.ydk` file follows the standard YGOPro deck format:
+Each `.json` deck file is the source of truth:
+```json
+{
+  "main": [89631139, 46986414],
+  "extra": [39030163],
+  "side": []
+}
 ```
-#created by @albertolicea00
-#main
-<card passcodes>
-#extra
-<card passcodes>
-!side
-<card passcodes>
+
+Other formats (`.ydk`, `.ydke`, `.txt`, `.cod`) are generated via `deck-convert.py` and gitignored.
+
+## Tools
+
+```bash
+python scripts/deck-convert.py      # Convert between formats (JSON ↔ YDK, YDKE, TXT, COD)
+python scripts/deck-validate.py     # Validate decks (structure, limits, card IDs)
 ```
+
+Both have interactive menus. Run without arguments to use.
 
 ## Documentation
 
 - [decks/README.md](./decks/README.md) — Full index with links to every deck
-- [ARCHITECTURE.md](./ARCHITECTURE.md) — Deck file formats (YDK, JSON, YDOG, COD, etc.), passcode system, APIs and conversion
+- [ARCHITECTURE.md](./ARCHITECTURE.md) — Deck file formats, passcode system, Konami apps, APIs and conversion
 - [CHANGELOG.md](./CHANGELOG.md) — Version history
 
 ## Sources
