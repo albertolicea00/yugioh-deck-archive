@@ -26,6 +26,19 @@ The standard deck format used by most simulators.
 - Used by: [YGOPro](https://github.com/Fluorohydride/ygopro), [EDOPro](https://projectignis.github.io/), [Dueling Nexus](https://duelingnexus.com/), [Dueling Book](https://www.duelingbook.com/)
 - This project uses YDK as its primary format
 
+### YDKE
+
+Compact URL format used by EDOPro and YGOPRODeck for deck sharing.
+
+```
+ydke://<main_b64>!<extra_b64>!<side_b64>!
+```
+
+- Each segment is base64-encoded passcodes packed as 32-bit little-endian integers
+- Empty segments allowed (e.g. `ydke://rvTMAhLZoAI=!/WccAA==!!` — no side deck)
+- Convertible 1:1 to/from YDK — same passcode data, different encoding
+- Used by: [EDOPro](https://projectignis.github.io/), [YGOPRODeck](https://ygoprodeck.com/)
+
 ### YDOG
 
 Native format for YGO Omega.
@@ -49,7 +62,7 @@ Structured format with card metadata.
 
 - Machine-readable, easy to parse programmatically
 - Often includes card names, types, and other metadata alongside passcodes
-- Used by: [YGOPRODeck API](https://ygoprodeck.com/api-guide/), [Master Duel](https://www.konami.com/yugioh/masterduel/) internal exports, custom tools
+- Used by: [YGOPRODeck API](https://ygoprodeck.com/api-guide/), custom tools
 - YGOPRODeck API endpoint: `https://db.ygoprodeck.com/api/v7/cardinfo.php`
 
 ### KDE
@@ -126,11 +139,24 @@ Since all formats reference the same passcodes, conversion is lossless:
 - **TXT → YDK**: Look up card names → passcodes via [YGOPRODeck API](https://db.ygoprodeck.com/api/v7/cardinfo.php?name=Blue-Eyes%20White%20Dragon)
 - **YDK → TXT**: Look up passcodes → card names via [YGOPRODeck API](https://db.ygoprodeck.com/api/v7/cardinfo.php?id=89631139)
 
+## Official Konami Apps & Games
+
+None of Konami's official apps export deck files natively. Decks live on Konami's servers, tied to a Konami ID.
+
+| App/Game | Export nativo | Interop |
+|----------|--------------|---------|
+| **Neuron** (companion app) | ✗ | Via browser extension → .ydk. Decks stored internally, linked to Konami ID. |
+| **Master Duel** | ✗ | Via [Deck Transfer extension](https://ygoprodeck.com/decks/transfer-tool) → .ydk/ydke://. Routes through Konami DB (db.yugioh-card.com). |
+| **Duel Links** | ✗ | Manual entry or screenshot OCR. Sites like [DuelLinksMeta](https://www.duellinksmeta.com/) have their own URL sharing. |
+
+The community standard for interchange remains `.ydk` — all transfer tools convert to/from it.
+
 ## APIs and Data Sources
 
 | Source | URL | Provides |
 |--------|-----|----------|
 | YGOPRODeck API | https://db.ygoprodeck.com/api/v7/cardinfo.php | Card data, images, passcodes, prices |
 | Yugipedia | https://yugipedia.com/ | Game-specific deck recipes, card lists, character info |
+| Yu-Gi-Oh! Fandom Wiki API | https://yugioh.fandom.com/api.php | Game decklists via MediaWiki API (wikitext parsing) |
 | YGOJSON | https://github.com/iconmaster5326/YGOJSON | Machine-readable JSON card database |
 | Konami Card DB | https://www.db.yugioh-card.com/ | Official card database with rulings |
