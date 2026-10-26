@@ -1,0 +1,45 @@
+name: Card IDs
+
+on:
+  push:
+    paths:
+      - 'decks/**/*.json'
+      - 'scripts/deck-validate.py'
+      - '.github/workflows/valide-deck-ids.yml'
+  pull_request:
+    paths:
+      - 'decks/**/*.json'
+      - 'scripts/deck-validate.py'
+      - '.github/workflows/valide-deck-ids.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PYTHONUNBUFFERED: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate ids
+        shell: bash
+        run: python scripts/deck-validate.py --check ids --deep 2>&1 | tee "$RUNNER_TEMP/validation.log"
+
+      - name: Upload report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: deck-ids-report
+          path: ${{ runner.temp }}/validation.log
+          if-no-files-found: ignore
+          retention-days: 14

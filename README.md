@@ -1,5 +1,8 @@
 # Yu-Gi-Oh! Deck Archive
 
+[![Card IDs](https://github.com/albertolicea00/yugioh-deck-archive/actions/workflows/valide-deck-ids.yml/badge.svg)](https://github.com/albertolicea00/yugioh-deck-archive/actions/workflows/valide-deck-ids.yml)
+[![Deck limits](https://github.com/albertolicea00/yugioh-deck-archive/actions/workflows/valide-deck-limits.yml/badge.svg)](https://github.com/albertolicea00/yugioh-deck-archive/actions/workflows/valide-deck-limits.yml)
+
 Manage, explore, and preserve Yu-Gi-Oh! decks from video games and TV series. Decks stored in `.json` format, organized by platform and game.
 
 ## Platforms
