@@ -14,3 +14,12 @@ Thumbs.db
 *~
 .vscode/
 .idea/
+
+# Generated deck formats (only .json is source of truth)
+decks/**/*.ydk
+decks/**/*.ydke
+decks/**/*.txt
+decks/**/*.cod
+
+# Script caches
+scripts/.card_names_cache.json
