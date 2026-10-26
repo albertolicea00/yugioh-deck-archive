@@ -473,6 +473,8 @@ def run_validation(target, enabled_checks, debug=False):
 
     _save_card_cache()
     print_summary(results)
+    if any(issue.level == Issue.ERROR for result in results for issue in result["issues"]):
+        sys.exit(1)
 
 
 # ══════════════════════════════════════
