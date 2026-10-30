@@ -13,6 +13,8 @@ USER_DECKS_DIR = os.path.join(ROOT_DIR, "user_decks")
 CARD_DB_PATH = os.path.join(ROOT_DIR, "data", "cards.cdb")
 CACHE_DIR = os.path.join(ROOT_DIR, "data", "cache")
 
+os.environ.setdefault("KIVY_VIDEO", "ffpyplayer")
+
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, FadeTransition
 from kivy.core.window import Window
