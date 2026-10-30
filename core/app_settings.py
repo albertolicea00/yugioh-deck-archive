@@ -6,6 +6,8 @@ import os
 DEFAULTS = {
     "ui_scale": 1.0,
     "language": "en",
+    "video_background": True,
+    "background_music": True,
 }
 
 SCALE_MIN = 0.8

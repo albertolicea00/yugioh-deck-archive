@@ -1,4 +1,6 @@
-"""Main menu — stone slabs over temple background."""
+"""Main menu — stone slabs over temple background with optional video and BGM."""
+
+import os
 
 from kivy.uix.screenmanager import Screen
 from kivy.uix.floatlayout import FloatLayout
@@ -6,14 +8,15 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
+from kivy.uix.video import Video
 from kivy.graphics import Color, Rectangle
-from kivy.metrics import dp
-
 from kivy.core.window import Window
+from kivy.core.audio import SoundLoader
 
 from widgets.stone_button import StoneButton
 from theme import (
-    BG_VERTICAL, BG_HORIZONTAL, SCRIM, TEXT_PRIMARY, GOLD_DIM,
+    BG_VERTICAL, BG_HORIZONTAL, VIDEO_VERTICAL, VIDEO_HORIZONTAL, MENU_BGM,
+    SCRIM, TEXT_PRIMARY, GOLD_DIM,
     FONT_SIZE_TITLE, FONT_SIZE_SMALL, SLAB_MIN_HEIGHT,
     menu_font,
 )
@@ -31,18 +34,26 @@ MAX_COLUMN_WIDTH = 520
 
 
 class MainMenuScreen(Screen):
-    def __init__(self, **kwargs):
+    def __init__(self, app_settings=None, **kwargs):
         super().__init__(name="main_menu", **kwargs)
-        root = FloatLayout()
+        self._app_settings = app_settings
+        self._video = None
+        self._bgm = None
+        self._root = FloatLayout()
 
+        # Static image fallback (always present, behind video)
         self._bg = Image(
             source=BG_VERTICAL,
             fit_mode="cover",
             size_hint=(1, 1),
         )
-        root.add_widget(self._bg)
-        Window.bind(size=self._on_window_resize)
+        self._root.add_widget(self._bg)
 
+        # Video background placeholder
+        self._video_slot = Widget(size_hint=(1, 1))
+        self._root.add_widget(self._video_slot)
+
+        # Scrim
         scrim = Widget(size_hint=(1, 1))
         with scrim.canvas:
             Color(*SCRIM)
@@ -51,7 +62,7 @@ class MainMenuScreen(Screen):
             pos=lambda w, v: setattr(self._scrim_rect, "pos", v),
             size=lambda w, v: setattr(self._scrim_rect, "size", v),
         )
-        root.add_widget(scrim)
+        self._root.add_widget(scrim)
 
         column = BoxLayout(
             orientation="vertical",
@@ -90,9 +101,7 @@ class MainMenuScreen(Screen):
         column.add_widget(Widget(size_hint_y=None, height=16))
 
         for entry in MENU_ENTRIES:
-            btn = StoneButton(
-                text=entry["label"],
-            )
+            btn = StoneButton(text=entry["label"])
             btn.bind(on_release=lambda _, eid=entry["id"]: self._navigate(eid))
             column.add_widget(btn)
 
@@ -110,11 +119,79 @@ class MainMenuScreen(Screen):
         column.height = sum(c.height for c in column.children) + column.spacing * len(column.children)
         column.width = MAX_COLUMN_WIDTH
         column.bind(parent=self._clamp_width)
-        root.bind(size=lambda *_: self._clamp_width())
+        self._root.bind(size=lambda *_: self._clamp_width())
 
-        root.add_widget(column)
+        self._root.add_widget(column)
         self._column = column
-        self.add_widget(root)
+        self.add_widget(self._root)
+
+        Window.bind(size=self._on_window_resize)
+
+    def _use_video(self):
+        if not self._app_settings:
+            return False
+        return self._app_settings.get("video_background", True) and os.path.exists(VIDEO_VERTICAL)
+
+    def _use_bgm(self):
+        if not self._app_settings:
+            return False
+        return self._app_settings.get("background_music", True) and os.path.exists(MENU_BGM)
+
+    def on_enter(self):
+        if self._use_video():
+            self._start_video()
+        else:
+            self._stop_video()
+
+        if self._use_bgm():
+            self._start_bgm()
+
+    def on_leave(self):
+        self._stop_video()
+        self._stop_bgm()
+
+    def _start_video(self):
+        if self._video:
+            self._video.state = "play"
+            return
+
+        w, h = Window.size
+        source = VIDEO_VERTICAL if h >= w else VIDEO_HORIZONTAL
+
+        self._video = Video(
+            source=source,
+            state="play",
+            options={"eos": "loop"},
+            size_hint=(1, 1),
+            fit_mode="cover",
+        )
+        self._video.opacity = 1
+        idx = self._root.children.index(self._video_slot)
+        self._root.remove_widget(self._video_slot)
+        self._root.add_widget(self._video, index=idx)
+
+    def _stop_video(self):
+        if self._video:
+            self._video.state = "stop"
+            idx = self._root.children.index(self._video)
+            self._root.remove_widget(self._video)
+            self._video.unload()
+            self._video = None
+            self._root.add_widget(self._video_slot, index=idx)
+
+    def _start_bgm(self):
+        if self._bgm and self._bgm.state == "play":
+            return
+        if not self._bgm:
+            self._bgm = SoundLoader.load(MENU_BGM)
+        if self._bgm:
+            self._bgm.loop = True
+            self._bgm.volume = 0.4
+            self._bgm.play()
+
+    def _stop_bgm(self):
+        if self._bgm and self._bgm.state == "play":
+            self._bgm.stop()
 
     def _clamp_width(self, *_):
         if not hasattr(self, "_column") or not self._column.parent:
@@ -138,6 +215,8 @@ class MainMenuScreen(Screen):
         w, h = size
         portrait = h >= w
         self._bg.source = BG_VERTICAL if portrait else BG_HORIZONTAL
+        if self._video and self._video.state == "play":
+            self._video.source = VIDEO_VERTICAL if portrait else VIDEO_HORIZONTAL
 
     def show_message(self, text):
         self._status.text = text

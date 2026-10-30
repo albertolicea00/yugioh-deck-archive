@@ -1,14 +1,14 @@
-"""Settings screen — UI scale and preferences."""
+"""Settings screen — UI scale, video background, and music toggles."""
 
 from kivy.uix.screenmanager import Screen
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.scrollview import ScrollView
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.slider import Slider
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle
-from kivy.metrics import Metrics
 
 from widgets.stone_button import StoneButton
 from widgets.stone_panel import StonePanel
@@ -65,49 +65,32 @@ class SettingsScreen(Screen):
         column.add_widget(header)
 
         panel = StonePanel(orientation="vertical", size_hint=(1, 1))
+        scroll = ScrollView(do_scroll_x=False)
+        content = BoxLayout(
+            orientation="vertical", size_hint_y=None, spacing=8, padding=[4, 4],
+        )
+        content.bind(minimum_height=content.setter("height"))
 
         # --- UI Scale ---
-        scale_header = Label(
-            text="UI Scale", font_size=FONT_SIZE_LIST, color=GOLD,
-            size_hint_y=None, height=36, halign="left", valign="middle",
-            bold=not face,
-        )
-        if face:
-            scale_header.font_name = face
-        scale_header.bind(size=scale_header.setter("text_size"))
-        panel.add_widget(scale_header)
-
-        scale_desc = Label(
-            text="Make everything bigger or smaller",
-            font_size=FONT_SIZE_DETAIL, color=TEXT_SECONDARY,
-            size_hint_y=None, height=24, halign="left", valign="middle",
-        )
-        scale_desc.bind(size=scale_desc.setter("text_size"))
-        panel.add_widget(scale_desc)
-        panel.add_widget(Widget(size_hint_y=None, height=8))
+        content.add_widget(self._section_label("UI Scale", face))
+        content.add_widget(self._desc_label("Make everything bigger or smaller"))
 
         slider_row = BoxLayout(size_hint_y=None, height=48, spacing=12)
-
         self._scale_label = Label(
             text="100%", font_size=FONT_SIZE_LIST, color=TEXT_PRIMARY,
-            size_hint_x=None, width=70, halign="center",
-            bold=True,
+            size_hint_x=None, width=70, halign="center", bold=True,
         )
         if face:
             self._scale_label.font_name = face
-
         self._slider = Slider(
             min=SCALE_MIN, max=SCALE_MAX, step=SCALE_STEP,
-            value=1.0,
-            cursor_size=(28, 28),
+            value=1.0, cursor_size=(28, 28),
         )
         self._slider.bind(value=self._on_scale_change)
-
         slider_row.add_widget(self._slider)
         slider_row.add_widget(self._scale_label)
-        panel.add_widget(slider_row)
+        content.add_widget(slider_row)
 
-        # Preset buttons
         preset_row = BoxLayout(size_hint_y=None, height=50, spacing=8)
         for pct in [100, 125, 150, 175, 200]:
             val = pct / 100.0
@@ -115,21 +98,46 @@ class SettingsScreen(Screen):
             btn.height = 50
             btn.bind(on_release=lambda _, v=val: self._set_scale(v))
             preset_row.add_widget(btn)
-        panel.add_widget(preset_row)
+        content.add_widget(preset_row)
 
-        panel.add_widget(Widget(size_hint_y=None, height=16))
+        content.add_widget(Widget(size_hint_y=None, height=16))
+
+        # --- Video Background ---
+        content.add_widget(self._section_label("Video Background", face))
+        content.add_widget(self._desc_label("Animated temple background on main menu"))
+
+        video_row = BoxLayout(size_hint_y=None, height=50, spacing=8)
+        self._video_on_btn = StoneButton(text="ON", font_size=FONT_SIZE_DETAIL)
+        self._video_on_btn.height = 50
+        self._video_on_btn.bind(on_release=lambda _: self._set_toggle("video_background", True))
+        self._video_off_btn = StoneButton(text="OFF", font_size=FONT_SIZE_DETAIL)
+        self._video_off_btn.height = 50
+        self._video_off_btn.bind(on_release=lambda _: self._set_toggle("video_background", False))
+        video_row.add_widget(self._video_on_btn)
+        video_row.add_widget(self._video_off_btn)
+        content.add_widget(video_row)
+
+        content.add_widget(Widget(size_hint_y=None, height=16))
+
+        # --- Background Music ---
+        content.add_widget(self._section_label("Background Music", face))
+        content.add_widget(self._desc_label("Menu music on main screen"))
+
+        music_row = BoxLayout(size_hint_y=None, height=50, spacing=8)
+        self._music_on_btn = StoneButton(text="ON", font_size=FONT_SIZE_DETAIL)
+        self._music_on_btn.height = 50
+        self._music_on_btn.bind(on_release=lambda _: self._set_toggle("background_music", True))
+        self._music_off_btn = StoneButton(text="OFF", font_size=FONT_SIZE_DETAIL)
+        self._music_off_btn.height = 50
+        self._music_off_btn.bind(on_release=lambda _: self._set_toggle("background_music", False))
+        music_row.add_widget(self._music_on_btn)
+        music_row.add_widget(self._music_off_btn)
+        content.add_widget(music_row)
+
+        content.add_widget(Widget(size_hint_y=None, height=16))
 
         # --- Preview ---
-        preview_header = Label(
-            text="Preview", font_size=FONT_SIZE_LIST, color=GOLD,
-            size_hint_y=None, height=36, halign="left", valign="middle",
-            bold=not face,
-        )
-        if face:
-            preview_header.font_name = face
-        preview_header.bind(size=preview_header.setter("text_size"))
-        panel.add_widget(preview_header)
-
+        content.add_widget(self._section_label("Preview", face))
         self._preview = Label(
             text="Yu-Gi-Oh! Deck Manager\nThis is how text will look at this scale.",
             font_size=FONT_SIZE_LIST, color=TEXT_PRIMARY,
@@ -138,22 +146,24 @@ class SettingsScreen(Screen):
         if face:
             self._preview.font_name = face
         self._preview.bind(size=self._preview.setter("text_size"))
-        panel.add_widget(self._preview)
+        content.add_widget(self._preview)
 
-        panel.add_widget(Widget(size_hint_y=1))
+        content.add_widget(Widget(size_hint_y=None, height=16))
 
-        # Apply button
-        apply_btn = StoneButton(text="Apply & Restart")
+        # Apply
+        apply_btn = StoneButton(text="Apply & Save")
         apply_btn.bind(on_release=lambda _: self._apply())
-        panel.add_widget(apply_btn)
+        content.add_widget(apply_btn)
 
         self._status = Label(
             text="", font_size=FONT_SIZE_DETAIL, color=GOLD_DIM,
             size_hint_y=None, height=30, halign="center",
         )
         self._status.bind(size=self._status.setter("text_size"))
-        panel.add_widget(self._status)
+        content.add_widget(self._status)
 
+        scroll.add_widget(content)
+        panel.add_widget(scroll)
         column.add_widget(panel)
         root.add_widget(column)
         self.add_widget(root)
@@ -161,10 +171,30 @@ class SettingsScreen(Screen):
         from kivy.core.window import Window
         Window.bind(size=self._on_window_resize)
 
+    def _section_label(self, text, face):
+        lbl = Label(
+            text=text, font_size=FONT_SIZE_LIST, color=GOLD,
+            size_hint_y=None, height=36, halign="left", valign="middle",
+            bold=not face,
+        )
+        if face:
+            lbl.font_name = face
+        lbl.bind(size=lbl.setter("text_size"))
+        return lbl
+
+    def _desc_label(self, text):
+        lbl = Label(
+            text=text, font_size=FONT_SIZE_DETAIL, color=TEXT_SECONDARY,
+            size_hint_y=None, height=24, halign="left", valign="middle",
+        )
+        lbl.bind(size=lbl.setter("text_size"))
+        return lbl
+
     def on_enter(self):
         if self._settings:
             self._slider.value = self._settings.ui_scale
         self._on_scale_change(None, self._slider.value)
+        self._update_toggle_labels()
 
     def _on_scale_change(self, instance, value):
         pct = int(round(value * 100))
@@ -174,16 +204,31 @@ class SettingsScreen(Screen):
     def _set_scale(self, value):
         self._slider.value = value
 
+    def _set_toggle(self, key, value):
+        if self._settings:
+            self._settings.set(key, value)
+        self._update_toggle_labels()
+
+    def _update_toggle_labels(self):
+        if not self._settings:
+            return
+        vid = self._settings.get("video_background", True)
+        self._video_on_btn.text = "ON  *" if vid else "ON"
+        self._video_off_btn.text = "OFF  *" if not vid else "OFF"
+
+        mus = self._settings.get("background_music", True)
+        self._music_on_btn.text = "ON  *" if mus else "ON"
+        self._music_off_btn.text = "OFF  *" if not mus else "OFF"
+
     def _apply(self):
         if not self._settings:
             return
-        scale = self._slider.value
-        self._settings.ui_scale = scale
+        self._settings.ui_scale = self._slider.value
         self._settings.save()
 
         from kivy.metrics import Metrics
-        Metrics.density = scale
-        self._status.text = f"Scale set to {int(scale * 100)}%. Restart app for full effect."
+        Metrics.density = self._settings.ui_scale
+        self._status.text = f"Saved. Restart app for full effect."
 
     def _go_back(self):
         self.manager.current = "main_menu"

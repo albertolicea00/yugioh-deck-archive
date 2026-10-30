@@ -53,7 +53,7 @@ class DeckManagerApp(App):
 
         sm = ScreenManager(transition=FadeTransition(duration=0.2))
 
-        sm.add_widget(MainMenuScreen())
+        sm.add_widget(MainMenuScreen(app_settings=self._app_settings))
         sm.add_widget(GameListScreen(deck_manager=self._dm))
         sm.add_widget(DeckListScreen(deck_manager=self._dm))
         sm.add_widget(DeckViewScreen(deck_manager=self._dm, card_db=self._card_db))
