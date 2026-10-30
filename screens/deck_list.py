@@ -11,6 +11,7 @@ from kivy.graphics import Color, Rectangle
 
 from widgets.stone_button import StoneButton
 from widgets.stone_panel import StonePanel
+from widgets.list_item import ListItem
 from theme import (
     BG_VERTICAL, SCRIM, TEXT_PRIMARY, TEXT_SECONDARY, TEXT_WARNING,
     FONT_SIZE_TITLE, FONT_SIZE_LIST, FONT_SIZE_SMALL, GOLD_DIM,
@@ -30,7 +31,7 @@ class DeckListScreen(Screen):
     def _build_ui(self):
         root = FloatLayout()
 
-        bg = Image(source=BG_VERTICAL, fit_mode="fill", size_hint=(1, 1))
+        bg = Image(source=BG_VERTICAL, fit_mode="cover", size_hint=(1, 1))
         root.add_widget(bg)
 
         scrim = Widget(size_hint=(1, 1))
@@ -103,9 +104,9 @@ class DeckListScreen(Screen):
                 warning = "  [over]"
 
             label = f"{deck['name']}  ({main_c}/{extra_c}/{side_c}){warning}"
-            btn = StoneButton(text=label)
-            btn.bind(on_release=lambda _, d=deck: self._open_deck(d))
-            self._list.add_widget(btn)
+            item = ListItem(text=label)
+            item.bind(on_release=lambda _, d=deck: self._open_deck(d))
+            self._list.add_widget(item)
 
     def _open_deck(self, deck_info):
         view = self.manager.get_screen("deck_view")

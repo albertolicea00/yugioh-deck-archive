@@ -41,7 +41,7 @@ class DeckEditorScreen(Screen):
     def _build_ui(self):
         root = FloatLayout()
 
-        bg = Image(source=BG_VERTICAL, fit_mode="fill", size_hint=(1, 1))
+        bg = Image(source=BG_VERTICAL, fit_mode="cover", size_hint=(1, 1))
         root.add_widget(bg)
 
         scrim = Widget(size_hint=(1, 1))

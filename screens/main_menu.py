@@ -7,11 +7,15 @@ from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle
+from kivy.metrics import dp
+
+from kivy.core.window import Window
 
 from widgets.stone_button import StoneButton
 from theme import (
-    BG_VERTICAL, SCRIM, TEXT_PRIMARY, GOLD_DIM,
+    BG_VERTICAL, BG_HORIZONTAL, SCRIM, TEXT_PRIMARY, GOLD_DIM,
     FONT_SIZE_TITLE, FONT_SIZE_SMALL, SLAB_MIN_HEIGHT,
+    menu_font,
 )
 
 
@@ -23,20 +27,22 @@ MENU_ENTRIES = [
     {"id": "settings", "label": "Settings"},
 ]
 
+MAX_COLUMN_WIDTH = 520
+
 
 class MainMenuScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(name="main_menu", **kwargs)
         root = FloatLayout()
 
-        bg = Image(
+        self._bg = Image(
             source=BG_VERTICAL,
-            fit_mode="fill",
+            fit_mode="cover",
             size_hint=(1, 1),
         )
-        root.add_widget(bg)
+        root.add_widget(self._bg)
+        Window.bind(size=self._on_window_resize)
 
-        # Scrim overlay
         scrim = Widget(size_hint=(1, 1))
         with scrim.canvas:
             Color(*SCRIM)
@@ -47,57 +53,74 @@ class MainMenuScreen(Screen):
         )
         root.add_widget(scrim)
 
-        # Center column
         column = BoxLayout(
             orientation="vertical",
-            size_hint=(0.85, None),
+            size_hint=(None, None),
             pos_hint={"center_x": 0.5, "center_y": 0.5},
-            spacing=12,
+            spacing=10,
             padding=[0, 20],
         )
 
-        # Title
+        face = menu_font()
+
         title = Label(
             text="Yu-Gi-Oh!",
-            font_size=FONT_SIZE_TITLE + 8,
+            font_size=FONT_SIZE_TITLE + 18,
             color=TEXT_PRIMARY,
-            bold=True,
+            bold=not face,
             size_hint_y=None,
-            height=50,
+            height=60,
         )
+        if face:
+            title.font_name = face
+
         subtitle = Label(
             text="Deck Manager",
             font_size=FONT_SIZE_TITLE,
             color=GOLD_DIM,
+            bold=not face,
             size_hint_y=None,
             height=36,
         )
+        if face:
+            subtitle.font_name = face
+
         column.add_widget(title)
         column.add_widget(subtitle)
-        column.add_widget(Widget(size_hint_y=None, height=20))
+        column.add_widget(Widget(size_hint_y=None, height=16))
 
-        # Menu buttons
         for entry in MENU_ENTRIES:
             btn = StoneButton(
                 text=entry["label"],
             )
             btn.bind(on_release=lambda _, eid=entry["id"]: self._navigate(eid))
             column.add_widget(btn)
-            column.add_widget(Widget(size_hint_y=None, height=6))
 
-        # Status line
         self._status = Label(
             text="",
             font_size=FONT_SIZE_SMALL,
             color=GOLD_DIM,
             size_hint_y=None,
-            height=24,
+            height=56,
         )
+        if face:
+            self._status.font_name = face
         column.add_widget(self._status)
 
         column.height = sum(c.height for c in column.children) + column.spacing * len(column.children)
+        column.width = MAX_COLUMN_WIDTH
+        column.bind(parent=self._clamp_width)
+        root.bind(size=lambda *_: self._clamp_width())
+
         root.add_widget(column)
+        self._column = column
         self.add_widget(root)
+
+    def _clamp_width(self, *_):
+        if not hasattr(self, "_column") or not self._column.parent:
+            return
+        parent_w = self._column.parent.width
+        self._column.width = min(MAX_COLUMN_WIDTH, parent_w * 0.85)
 
     def _navigate(self, destination):
         if destination == "games":
@@ -110,6 +133,11 @@ class MainMenuScreen(Screen):
             self.manager.current = "import_export"
         elif destination == "settings":
             self._status.text = "Settings — coming soon"
+
+    def _on_window_resize(self, window, size):
+        w, h = size
+        portrait = h >= w
+        self._bg.source = BG_VERTICAL if portrait else BG_HORIZONTAL
 
     def show_message(self, text):
         self._status.text = text

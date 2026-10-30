@@ -10,6 +10,12 @@ BG_VERTICAL = os.path.join(ASSETS_DIR, "backgrounds", "background-menu-v.jpeg")
 BG_HORIZONTAL = os.path.join(ASSETS_DIR, "backgrounds", "background-menu-h.jpeg")
 FRAME_RESTING = os.path.join(ASSETS_DIR, "frames", "frame-menu.png")
 FRAME_ACTIVE = os.path.join(ASSETS_DIR, "frames", "frame-menu-active.png")
+PAPYRUS_PATH = "/System/Library/Fonts/Supplemental/Papyrus.ttc"
+
+def menu_font():
+    if os.path.exists(PAPYRUS_PATH):
+        return PAPYRUS_PATH
+    return ""
 
 # Colors (RGBA 0-1)
 GOLD = (0.957, 0.902, 0.776, 1)
@@ -28,12 +34,12 @@ TEXT_SUCCESS = (0.533, 0.867, 0.533, 1)
 BG_DARK = (0.06, 0.04, 0.03, 1)
 
 FONT_SIZE_TITLE = 28
-FONT_SIZE_BUTTON = 22
+FONT_SIZE_BUTTON = 30
 FONT_SIZE_LIST = 18
 FONT_SIZE_DETAIL = 16
 FONT_SIZE_SMALL = 14
 
-SLAB_MIN_HEIGHT = 64
+SLAB_MIN_HEIGHT = 88
 SLAB_PADDING = (20, 12)
 
 # TCG deck limits
