@@ -1,35 +1,39 @@
-"""Game list — browse games/platforms that contain decks."""
+"""Game list — browse games/platforms as a grid of framed tiles."""
 
 from kivy.uix.screenmanager import Screen
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle
+from kivy.core.window import Window
 
 from widgets.stone_button import StoneButton
-from widgets.stone_panel import StonePanel
-from widgets.list_item import ListItem
+from widgets.game_tile import GameTile
 from theme import (
     scaled,
-    BG_VERTICAL, SCRIM, TEXT_PRIMARY, TEXT_SECONDARY, GOLD_DIM,
-    FONT_SIZE_TITLE, FONT_SIZE_LIST, FONT_SIZE_SMALL,
+    BG_VERTICAL, BG_HORIZONTAL, SCRIM, TEXT_PRIMARY, TEXT_SECONDARY, GOLD_DIM,
+    FONT_SIZE_TITLE, FONT_SIZE_LIST, FONT_SIZE_SMALL, menu_font,
 )
+
+TILE_MIN_WIDTH = scaled(220)
 
 
 class GameListScreen(Screen):
     def __init__(self, deck_manager=None, **kwargs):
         super().__init__(name="game_list", **kwargs)
         self._dm = deck_manager
+        self._games = []
         self._build_ui()
 
     def _build_ui(self):
         root = FloatLayout()
 
-        bg = Image(source=BG_VERTICAL, fit_mode="cover", size_hint=(1, 1))
-        root.add_widget(bg)
+        self._bg = Image(source=BG_VERTICAL, fit_mode="cover", size_hint=(1, 1))
+        root.add_widget(self._bg)
 
         scrim = Widget(size_hint=(1, 1))
         with scrim.canvas:
@@ -43,57 +47,84 @@ class GameListScreen(Screen):
 
         column = BoxLayout(
             orientation="vertical",
-            size_hint=(0.92, 0.92),
+            size_hint=(0.94, 0.94),
             pos_hint={"center_x": 0.5, "center_y": 0.5},
             spacing=scaled(8),
         )
 
-        # Header
+        face = menu_font()
+
         header = BoxLayout(size_hint_y=None, height=scaled(50), spacing=scaled(10))
         back_btn = StoneButton(text="Back", size_hint_x=None, width=scaled(100))
         back_btn.bind(on_release=lambda _: setattr(self.manager, "current", "main_menu"))
         header.add_widget(back_btn)
-        header.add_widget(Label(
-            text="Games", font_size=FONT_SIZE_TITLE, color=TEXT_PRIMARY, bold=True,
-        ))
+        title_lbl = Label(
+            text="My Decks", font_size=FONT_SIZE_TITLE, color=TEXT_PRIMARY,
+            bold=not face,
+        )
+        if face:
+            title_lbl.font_name = face
+        header.add_widget(title_lbl)
         column.add_widget(header)
 
-        # Scrollable game list
-        panel = StonePanel(orientation="vertical", size_hint=(1, 1))
         scroll = ScrollView(do_scroll_x=False)
-        self._list = BoxLayout(
-            orientation="vertical", size_hint_y=None, spacing=scaled(6), padding=[scaled(4), scaled(4)],
+        self._grid = GridLayout(
+            cols=2,
+            size_hint_y=None,
+            spacing=scaled(10),
+            padding=[scaled(6), scaled(6)],
         )
-        self._list.bind(minimum_height=self._list.setter("height"))
-        scroll.add_widget(self._list)
-        panel.add_widget(scroll)
-        column.add_widget(panel)
+        self._grid.bind(minimum_height=self._grid.setter("height"))
+        scroll.add_widget(self._grid)
+        column.add_widget(scroll)
 
         root.add_widget(column)
         self.add_widget(root)
 
+        Window.bind(size=self._on_resize)
+
     def on_enter(self):
         self._refresh()
 
+    def _on_resize(self, window, size):
+        w, h = size
+        self._bg.source = BG_VERTICAL if h >= w else BG_HORIZONTAL
+        avail = w * 0.94 - scaled(12)
+        cols = max(1, int(avail / TILE_MIN_WIDTH))
+        cols = min(cols, 4)
+        if self._grid.cols != cols:
+            self._grid.cols = cols
+            if self._games:
+                self._rebuild_grid()
+
     def _refresh(self):
-        self._list.clear_widgets()
+        self._games = []
+        self._grid.clear_widgets()
         if self._dm is None:
             return
-        games = self._dm.list_games()
-        if not games:
-            self._list.add_widget(Label(
+        self._games = self._dm.list_games()
+        if not self._games:
+            self._grid.cols = 1
+            self._grid.add_widget(Label(
                 text="No games found.\nAdd deck files to the decks/ folder.",
                 font_size=FONT_SIZE_LIST, color=TEXT_SECONDARY,
                 size_hint_y=None, height=scaled(80), halign="center",
             ))
             return
 
-        for game in games:
-            item = ListItem(
-                text=f"{game['name']}  ({game['deck_count']} decks)",
+        avail = Window.width * 0.94 - scaled(12)
+        self._grid.cols = max(1, min(4, int(avail / TILE_MIN_WIDTH)))
+        self._rebuild_grid()
+
+    def _rebuild_grid(self):
+        self._grid.clear_widgets()
+        for game in self._games:
+            tile = GameTile(
+                game_name=game["name"],
+                deck_count=game["deck_count"],
             )
-            item.bind(on_release=lambda _, g=game: self._open_game(g))
-            self._list.add_widget(item)
+            tile.bind(on_release=lambda _, g=game: self._open_game(g))
+            self._grid.add_widget(tile)
 
     def _open_game(self, game):
         deck_list = self.manager.get_screen("deck_list")
