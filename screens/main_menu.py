@@ -132,7 +132,7 @@ class MainMenuScreen(Screen):
         elif destination == "import":
             self.manager.current = "import_export"
         elif destination == "settings":
-            self._status.text = "Settings — coming soon"
+            self.manager.current = "settings"
 
     def _on_window_resize(self, window, size):
         w, h = size
