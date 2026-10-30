@@ -54,8 +54,19 @@ python scripts/deck-validate.py     # Validate decks (structure, limits, card ID
 
 Both have interactive menus. Run without arguments to use.
 
+## App
+
+Cross-platform deck manager app (mobile + desktop) built with Kivy. Browse, create, edit, validate, and export decks with an Egyptian temple UI.
+
+```bash
+pip install -r requirements.txt && python main.py
+```
+
 ## Documentation
 
+- [docs/APP_ARCHITECTURE.md](./docs/APP_ARCHITECTURE.md) — App architecture, validation rules, card type flags
+- [docs/APP_SETUP.md](./docs/APP_SETUP.md) — App install and run guide
+- [docs/APP_BUILD.md](./docs/APP_BUILD.md) — Build for Android, iOS, desktop
 - [decks/README.md](./decks/README.md) — Full index with links to every deck
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — Deck file formats, passcode system, Konami apps, APIs and conversion
 - [CHANGELOG.md](./CHANGELOG.md) — Version history
