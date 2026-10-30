@@ -15,6 +15,9 @@ CACHE_DIR = os.path.join(ROOT_DIR, "data", "cache")
 
 os.environ.setdefault("KIVY_VIDEO", "ffpyplayer")
 
+from kivy.config import Config
+Config.set("kivy", "window_icon", os.path.join(ROOT_DIR, "assets", "icons", "app-icon.png"))
+
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, FadeTransition
 from kivy.core.window import Window
