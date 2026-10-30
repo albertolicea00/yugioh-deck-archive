@@ -23,3 +23,17 @@ decks/**/*.cod
 
 # Script caches
 scripts/.card_names_cache.json
+
+# App runtime data
+app/data/
+app/.kivy/
+user_decks/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.spec
