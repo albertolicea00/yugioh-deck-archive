@@ -48,6 +48,32 @@ RULES = {
     "max_copies": 3,
 }
 
+# Per-game rule overrides (folder name prefix → rule overrides)
+# Games with non-standard deck limits get relaxed validation.
+GAME_RULES = {
+    # Anime — partial decks, only cards shown on screen
+    "[TV] Duel Monsters": {"main_min": 0},
+    "[TV] GX": {"main_min": 0},
+    "[TV] 5Ds": {"main_min": 0},
+    "[TV] ZEXAL": {"main_min": 0},
+    "[TV] ARC-V": {"main_min": 0},
+    "[TV] VRAINS": {"main_min": 0},
+    "[TV] SEVENS": {"main_min": 0},
+    "[TV] GO RUSH": {"main_min": 0},
+}
+
+
+def get_rules_for_path(path):
+    rel = os.path.relpath(path, DECKS_DIR)
+    parts = rel.split(os.sep)
+    if len(parts) >= 2:
+        game_folder = parts[0]
+        if game_folder in GAME_RULES:
+            merged = dict(RULES)
+            merged.update(GAME_RULES[game_folder])
+            return merged
+    return RULES
+
 # ══════════════════════════════════════
 # Available checks registry
 # ══════════════════════════════════════
@@ -188,25 +214,26 @@ def check_structure(deck, path):
 # Check: limits
 # ══════════════════════════════════════
 
-def check_limits(main, extra, side, debug=False):
+def check_limits(main, extra, side, rules=None, debug=False):
+    rules = rules or RULES
     issues = []
     mc, ec, sc = len(main), len(extra), len(side)
 
     if debug:
         issues.append(Issue(Issue.INFO, "limits", f"Size: {mc}m / {ec}e / {sc}s"))
 
-    if mc < RULES["main_min"]:
-        issues.append(Issue(Issue.ERROR, "limits", f"Main deck: {mc} cards (min {RULES['main_min']})"))
-    elif mc > RULES["main_max"]:
-        issues.append(Issue(Issue.ERROR, "limits", f"Main deck: {mc} cards (max {RULES['main_max']})"))
+    if mc < rules["main_min"]:
+        issues.append(Issue(Issue.ERROR, "limits", f"Main deck: {mc} cards (min {rules['main_min']})"))
+    elif mc > rules["main_max"]:
+        issues.append(Issue(Issue.ERROR, "limits", f"Main deck: {mc} cards (max {rules['main_max']})"))
     elif debug:
         issues.append(Issue(Issue.INFO, "limits", f"Main deck size OK ({mc})"))
 
-    if ec > RULES["extra_max"]:
-        issues.append(Issue(Issue.ERROR, "limits", f"Extra deck: {ec} cards (max {RULES['extra_max']})"))
+    if ec > rules["extra_max"]:
+        issues.append(Issue(Issue.ERROR, "limits", f"Extra deck: {ec} cards (max {rules['extra_max']})"))
 
-    if sc > RULES["side_max"]:
-        issues.append(Issue(Issue.ERROR, "limits", f"Side deck: {sc} cards (max {RULES['side_max']})"))
+    if sc > rules["side_max"]:
+        issues.append(Issue(Issue.ERROR, "limits", f"Side deck: {sc} cards (max {rules['side_max']})"))
 
     # Copy limit
     all_cards = list(main) + list(extra) + list(side)
@@ -214,10 +241,10 @@ def check_limits(main, extra, side, debug=False):
     for c in all_cards:
         card_counts[c] = card_counts.get(c, 0) + 1
 
-    over_limit = [(cid, cnt) for cid, cnt in card_counts.items() if cnt > RULES["max_copies"]]
+    over_limit = [(cid, cnt) for cid, cnt in card_counts.items() if cnt > rules["max_copies"]]
     for cid, cnt in sorted(over_limit, key=lambda x: -x[1]):
         name = card_name(cid)
-        issues.append(Issue(Issue.ERROR, "limits", f"{name}: {cnt} copies (max {RULES['max_copies']})"))
+        issues.append(Issue(Issue.ERROR, "limits", f"{name}: {cnt} copies (max {rules['max_copies']})"))
 
     if debug and not over_limit:
         issues.append(Issue(Issue.INFO, "limits", "All cards within copy limit"))
@@ -284,7 +311,8 @@ def validate_deck(path, enabled_checks, debug=False):
         return issues
 
     if "limits" in enabled_checks:
-        issues.extend(check_limits(main, extra, side, debug))
+        rules = get_rules_for_path(path)
+        issues.extend(check_limits(main, extra, side, rules, debug))
 
     if "ids" in enabled_checks:
         issues.extend(check_ids(main, extra, side, debug))
