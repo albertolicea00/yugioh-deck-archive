@@ -8,7 +8,7 @@ from kivy.graphics import Color, RoundedRectangle
 
 from theme import (
     TEXT_PRIMARY, SELECTED_FILL, SELECTED_EDGE, GOLD_DIM,
-    FONT_SIZE_LIST, menu_font,
+    FONT_SIZE_LIST, menu_font, scaled,
 )
 
 
@@ -21,8 +21,8 @@ class ListItem(ButtonBehavior, BoxLayout):
         super().__init__(**kwargs)
         self.orientation = "horizontal"
         self.size_hint_y = None
-        self.height = 48
-        self.padding = [16, 8]
+        self.height = scaled(48)
+        self.padding = [scaled(16), scaled(8)]
 
         self._bg_rect = None
         self._hovered = False
@@ -54,7 +54,7 @@ class ListItem(ButtonBehavior, BoxLayout):
             with self.canvas.before:
                 Color(*SELECTED_FILL)
                 self._bg_rect = RoundedRectangle(
-                    pos=self.pos, size=self.size, radius=[6],
+                    pos=self.pos, size=self.size, radius=[scaled(6)],
                 )
         else:
             self._bg_rect = None

@@ -18,7 +18,7 @@ from theme import (
     BG_VERTICAL, BG_HORIZONTAL, VIDEO_VERTICAL, VIDEO_HORIZONTAL, MENU_BGM,
     SCRIM, TEXT_PRIMARY, GOLD_DIM,
     FONT_SIZE_TITLE, FONT_SIZE_SMALL, SLAB_MIN_HEIGHT,
-    menu_font,
+    menu_font, scaled,
 )
 
 
@@ -30,7 +30,7 @@ MENU_ENTRIES = [
     {"id": "settings", "label": "Settings"},
 ]
 
-MAX_COLUMN_WIDTH = 520
+MAX_COLUMN_WIDTH = scaled(520)
 
 
 class MainMenuScreen(Screen):
@@ -68,19 +68,19 @@ class MainMenuScreen(Screen):
             orientation="vertical",
             size_hint=(None, None),
             pos_hint={"center_x": 0.5, "center_y": 0.5},
-            spacing=10,
-            padding=[0, 20],
+            spacing=scaled(10),
+            padding=[0, scaled(20)],
         )
 
         face = menu_font()
 
         title = Label(
             text="Yu-Gi-Oh!",
-            font_size=FONT_SIZE_TITLE + 18,
+            font_size=FONT_SIZE_TITLE + scaled(18),
             color=TEXT_PRIMARY,
             bold=not face,
             size_hint_y=None,
-            height=60,
+            height=scaled(60),
         )
         if face:
             title.font_name = face
@@ -91,14 +91,14 @@ class MainMenuScreen(Screen):
             color=GOLD_DIM,
             bold=not face,
             size_hint_y=None,
-            height=36,
+            height=scaled(36),
         )
         if face:
             subtitle.font_name = face
 
         column.add_widget(title)
         column.add_widget(subtitle)
-        column.add_widget(Widget(size_hint_y=None, height=16))
+        column.add_widget(Widget(size_hint_y=None, height=scaled(16)))
 
         for entry in MENU_ENTRIES:
             btn = StoneButton(text=entry["label"])
@@ -110,7 +110,7 @@ class MainMenuScreen(Screen):
             font_size=FONT_SIZE_SMALL,
             color=GOLD_DIM,
             size_hint_y=None,
-            height=56,
+            height=scaled(56),
         )
         if face:
             self._status.font_name = face

@@ -13,6 +13,7 @@ from widgets.stone_button import StoneButton
 from widgets.stone_panel import StonePanel
 from widgets.list_item import ListItem
 from theme import (
+    scaled,
     BG_VERTICAL, SCRIM, TEXT_PRIMARY, TEXT_SECONDARY, GOLD_DIM,
     FONT_SIZE_TITLE, FONT_SIZE_LIST, FONT_SIZE_SMALL,
 )
@@ -44,12 +45,12 @@ class GameListScreen(Screen):
             orientation="vertical",
             size_hint=(0.92, 0.92),
             pos_hint={"center_x": 0.5, "center_y": 0.5},
-            spacing=8,
+            spacing=scaled(8),
         )
 
         # Header
-        header = BoxLayout(size_hint_y=None, height=50, spacing=10)
-        back_btn = StoneButton(text="Back", size_hint_x=None, width=100)
+        header = BoxLayout(size_hint_y=None, height=scaled(50), spacing=scaled(10))
+        back_btn = StoneButton(text="Back", size_hint_x=None, width=scaled(100))
         back_btn.bind(on_release=lambda _: setattr(self.manager, "current", "main_menu"))
         header.add_widget(back_btn)
         header.add_widget(Label(
@@ -61,7 +62,7 @@ class GameListScreen(Screen):
         panel = StonePanel(orientation="vertical", size_hint=(1, 1))
         scroll = ScrollView(do_scroll_x=False)
         self._list = BoxLayout(
-            orientation="vertical", size_hint_y=None, spacing=6, padding=[4, 4],
+            orientation="vertical", size_hint_y=None, spacing=scaled(6), padding=[scaled(4), scaled(4)],
         )
         self._list.bind(minimum_height=self._list.setter("height"))
         scroll.add_widget(self._list)
@@ -83,7 +84,7 @@ class GameListScreen(Screen):
             self._list.add_widget(Label(
                 text="No games found.\nAdd deck files to the decks/ folder.",
                 font_size=FONT_SIZE_LIST, color=TEXT_SECONDARY,
-                size_hint_y=None, height=80, halign="center",
+                size_hint_y=None, height=scaled(80), halign="center",
             ))
             return
 

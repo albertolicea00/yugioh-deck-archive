@@ -9,7 +9,7 @@ from kivy.core.window import Window
 
 from theme import (
     FRAME_RESTING, FRAME_ACTIVE, TEXT_PRIMARY,
-    FONT_SIZE_BUTTON, SLAB_MIN_HEIGHT, menu_font,
+    FONT_SIZE_BUTTON, SLAB_MIN_HEIGHT, menu_font, scaled,
 )
 
 
@@ -26,8 +26,8 @@ class StoneButton(ButtonBehavior, BoxLayout):
         self.orientation = "horizontal"
         self.size_hint_y = None
         self.height = SLAB_MIN_HEIGHT
-        self.padding = [10, 5]
-        self.spacing = 10
+        self.padding = [scaled(10), scaled(5)]
+        self.spacing = scaled(10)
 
         self._draw_bg()
 

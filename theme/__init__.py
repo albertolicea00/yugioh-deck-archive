@@ -1,6 +1,9 @@
-"""Egyptian temple theme — colors, fonts, paths."""
+"""Egyptian temple theme — colors, fonts, paths, scaled sizes."""
 
+import json
 import os
+
+from kivy.metrics import sp, dp
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
@@ -16,10 +19,26 @@ VIDEO_HORIZONTAL = os.path.join(ASSETS_DIR, "videos", "background-menu-h.mp4")
 MENU_BGM = os.path.join(ASSETS_DIR, "sounds", "menu-bgm.mp3")
 PAPYRUS_PATH = "/System/Library/Fonts/Supplemental/Papyrus.ttc"
 
+# UI scale factor — loaded once at import from settings file
+_SETTINGS_PATH = os.path.join(ROOT_DIR, "data", "settings.json")
+_UI_SCALE = 1.0
+if os.path.exists(_SETTINGS_PATH):
+    try:
+        with open(_SETTINGS_PATH) as _f:
+            _UI_SCALE = max(0.8, min(2.0, float(json.load(_f).get("ui_scale", 1.0))))
+    except (json.JSONDecodeError, OSError, ValueError):
+        pass
+
+
+def scaled(value):
+    return int(value * _UI_SCALE)
+
+
 def menu_font():
     if os.path.exists(PAPYRUS_PATH):
         return PAPYRUS_PATH
     return ""
+
 
 # Colors (RGBA 0-1)
 GOLD = (0.957, 0.902, 0.776, 1)
@@ -37,14 +56,14 @@ TEXT_WARNING = (0.867, 0.533, 0.533, 1)
 TEXT_SUCCESS = (0.533, 0.867, 0.533, 1)
 BG_DARK = (0.06, 0.04, 0.03, 1)
 
-FONT_SIZE_TITLE = 28
-FONT_SIZE_BUTTON = 30
-FONT_SIZE_LIST = 18
-FONT_SIZE_DETAIL = 16
-FONT_SIZE_SMALL = 14
+FONT_SIZE_TITLE = scaled(28)
+FONT_SIZE_BUTTON = scaled(30)
+FONT_SIZE_LIST = scaled(18)
+FONT_SIZE_DETAIL = scaled(16)
+FONT_SIZE_SMALL = scaled(14)
 
-SLAB_MIN_HEIGHT = 88
-SLAB_PADDING = (20, 12)
+SLAB_MIN_HEIGHT = scaled(88)
+SLAB_PADDING = (scaled(20), scaled(12))
 
 # TCG deck limits
 MAIN_MIN = 40

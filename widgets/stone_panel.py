@@ -4,7 +4,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.graphics import Color, RoundedRectangle, Line
 from kivy.properties import ListProperty, NumericProperty
 
-from theme import DARK_PANEL, DARK_PANEL_EDGE
+from theme import DARK_PANEL, DARK_PANEL_EDGE, scaled
 
 
 class StonePanel(BoxLayout):
@@ -14,8 +14,8 @@ class StonePanel(BoxLayout):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.padding = [16, 12]
-        self.spacing = 8
+        self.padding = [scaled(16), scaled(12)]
+        self.spacing = scaled(8)
         self.bind(pos=self._draw, size=self._draw)
         self._draw()
 

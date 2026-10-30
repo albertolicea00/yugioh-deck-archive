@@ -41,9 +41,6 @@ class DeckManagerApp(App):
         settings_path = os.path.join(ROOT_DIR, "data", "settings.json")
         self._app_settings = AppSettings(settings_path)
 
-        from kivy.metrics import Metrics
-        Metrics.density = self._app_settings.ui_scale
-
         self._dm = DeckManager(REPO_DECKS_DIR, USER_DECKS_DIR)
 
         self._card_db = None

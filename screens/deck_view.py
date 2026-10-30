@@ -16,6 +16,7 @@ from widgets.card_grid import CardGrid
 from core.card_api import card_image_url
 from core.formats import count_unique
 from theme import (
+    scaled,
     BG_VERTICAL, SCRIM, TEXT_PRIMARY, TEXT_SECONDARY, TEXT_WARNING, TEXT_SUCCESS,
     FONT_SIZE_TITLE, FONT_SIZE_LIST, FONT_SIZE_DETAIL, GOLD_DIM,
 )
@@ -53,12 +54,12 @@ class DeckViewScreen(Screen):
             orientation="vertical",
             size_hint=(0.95, 0.95),
             pos_hint={"center_x": 0.5, "center_y": 0.5},
-            spacing=6,
+            spacing=scaled(6),
         )
 
         # Header
-        header = BoxLayout(size_hint_y=None, height=50, spacing=8)
-        back_btn = StoneButton(text="Back", size_hint_x=None, width=90)
+        header = BoxLayout(size_hint_y=None, height=scaled(50), spacing=scaled(8))
+        back_btn = StoneButton(text="Back", size_hint_x=None, width=scaled(90))
         back_btn.bind(on_release=lambda _: setattr(self.manager, "current", "deck_list"))
         header.add_widget(back_btn)
         self._title = Label(
@@ -66,7 +67,7 @@ class DeckViewScreen(Screen):
         )
         header.add_widget(self._title)
 
-        edit_btn = StoneButton(text="Edit", size_hint_x=None, width=90)
+        edit_btn = StoneButton(text="Edit", size_hint_x=None, width=scaled(90))
         edit_btn.bind(on_release=lambda _: self._edit())
         header.add_widget(edit_btn)
         column.add_widget(header)
@@ -74,13 +75,13 @@ class DeckViewScreen(Screen):
         # Validation status
         self._status = Label(
             text="", font_size=FONT_SIZE_DETAIL, color=TEXT_SUCCESS,
-            size_hint_y=None, height=24, halign="left",
+            size_hint_y=None, height=scaled(24), halign="left",
         )
         self._status.bind(size=self._status.setter("text_size"))
         column.add_widget(self._status)
 
         # Tab bar: Main / Extra / Side
-        tabs = BoxLayout(size_hint_y=None, height=40, spacing=4)
+        tabs = BoxLayout(size_hint_y=None, height=scaled(40), spacing=scaled(4))
         self._tab_btns = {}
         for tab_name in ["Main", "Extra", "Side"]:
             btn = StoneButton(text=tab_name, font_size=16)

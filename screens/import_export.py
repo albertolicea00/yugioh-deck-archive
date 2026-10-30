@@ -14,6 +14,7 @@ from widgets.stone_button import StoneButton
 from widgets.stone_panel import StonePanel
 from core import formats
 from theme import (
+    scaled,
     BG_VERTICAL, SCRIM, TEXT_PRIMARY, TEXT_SECONDARY, TEXT_SUCCESS, TEXT_WARNING,
     FONT_SIZE_TITLE, FONT_SIZE_LIST, FONT_SIZE_DETAIL, FONT_SIZE_SMALL,
     DARK_PANEL, GOLD_DIM,
@@ -47,12 +48,12 @@ class ImportExportScreen(Screen):
             orientation="vertical",
             size_hint=(0.92, 0.92),
             pos_hint={"center_x": 0.5, "center_y": 0.5},
-            spacing=8,
+            spacing=scaled(8),
         )
 
         # Header
-        header = BoxLayout(size_hint_y=None, height=50, spacing=10)
-        back_btn = StoneButton(text="Back", size_hint_x=None, width=90)
+        header = BoxLayout(size_hint_y=None, height=scaled(50), spacing=scaled(10))
+        back_btn = StoneButton(text="Back", size_hint_x=None, width=scaled(90))
         back_btn.bind(on_release=lambda _: setattr(self.manager, "current", "main_menu"))
         header.add_widget(back_btn)
         header.add_widget(Label(
@@ -64,11 +65,11 @@ class ImportExportScreen(Screen):
         import_panel = StonePanel(orientation="vertical", size_hint_y=0.5)
         import_panel.add_widget(Label(
             text="Import", font_size=FONT_SIZE_LIST, color=TEXT_PRIMARY, bold=True,
-            size_hint_y=None, height=30,
+            size_hint_y=None, height=scaled(30),
         ))
 
         # YDKE paste
-        ydke_row = BoxLayout(size_hint_y=None, height=40, spacing=6)
+        ydke_row = BoxLayout(size_hint_y=None, height=scaled(40), spacing=scaled(6))
         self._ydke_input = TextInput(
             hint_text="Paste YDKE URL here (ydke://...)",
             multiline=False,
@@ -77,13 +78,13 @@ class ImportExportScreen(Screen):
             cursor_color=list(TEXT_PRIMARY),
         )
         ydke_row.add_widget(self._ydke_input)
-        ydke_btn = StoneButton(text="Import", size_hint_x=None, width=100)
+        ydke_btn = StoneButton(text="Import", size_hint_x=None, width=scaled(100))
         ydke_btn.bind(on_release=lambda _: self._import_ydke())
         ydke_row.add_widget(ydke_btn)
         import_panel.add_widget(ydke_row)
 
         # YDK paste
-        ydk_row = BoxLayout(size_hint_y=None, height=40, spacing=6)
+        ydk_row = BoxLayout(size_hint_y=None, height=scaled(40), spacing=scaled(6))
         self._ydk_input = TextInput(
             hint_text="Paste YDK content here...",
             multiline=True,
@@ -94,7 +95,7 @@ class ImportExportScreen(Screen):
         )
         import_panel.add_widget(self._ydk_input)
 
-        ydk_btn = StoneButton(text="Import YDK", size_hint_x=None, width=120)
+        ydk_btn = StoneButton(text="Import YDK", size_hint_x=None, width=scaled(120))
         ydk_btn.bind(on_release=lambda _: self._import_ydk())
         import_panel.add_widget(ydk_btn)
 
@@ -104,15 +105,15 @@ class ImportExportScreen(Screen):
         export_panel = StonePanel(orientation="vertical", size_hint_y=0.3)
         export_panel.add_widget(Label(
             text="Export", font_size=FONT_SIZE_LIST, color=TEXT_PRIMARY, bold=True,
-            size_hint_y=None, height=30,
+            size_hint_y=None, height=scaled(30),
         ))
         export_panel.add_widget(Label(
             text="Open a deck and use the export options from the deck view.",
             font_size=FONT_SIZE_DETAIL, color=TEXT_SECONDARY,
-            size_hint_y=None, height=40, halign="center",
+            size_hint_y=None, height=scaled(40), halign="center",
         ))
 
-        export_row = BoxLayout(size_hint_y=None, height=40, spacing=6)
+        export_row = BoxLayout(size_hint_y=None, height=scaled(40), spacing=scaled(6))
         for fmt in ["YDK", "YDKE", "TXT"]:
             btn = StoneButton(text=f"Export {fmt}", font_size=14)
             btn.bind(on_release=lambda _, f=fmt: self._export(f))
@@ -123,7 +124,7 @@ class ImportExportScreen(Screen):
         # Status
         self._status = Label(
             text="", font_size=FONT_SIZE_SMALL, color=TEXT_SUCCESS,
-            size_hint_y=None, height=24,
+            size_hint_y=None, height=scaled(24),
         )
         column.add_widget(self._status)
 

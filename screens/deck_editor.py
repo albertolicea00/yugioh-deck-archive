@@ -18,6 +18,7 @@ from core.card_api import card_image_url
 from core.formats import count_unique
 from core.validation import validate_deck, is_extra_deck_card
 from theme import (
+    scaled,
     BG_VERTICAL, SCRIM, TEXT_PRIMARY, TEXT_SECONDARY, TEXT_WARNING, TEXT_SUCCESS,
     FONT_SIZE_TITLE, FONT_SIZE_LIST, FONT_SIZE_DETAIL, FONT_SIZE_SMALL,
     GOLD_DIM, DARK_PANEL, MAX_COPIES,
@@ -58,19 +59,19 @@ class DeckEditorScreen(Screen):
             orientation="vertical",
             size_hint=(0.95, 0.95),
             pos_hint={"center_x": 0.5, "center_y": 0.5},
-            spacing=4,
+            spacing=scaled(4),
         )
 
         # Header
-        header = BoxLayout(size_hint_y=None, height=44, spacing=6)
-        back_btn = StoneButton(text="Back", size_hint_x=None, width=80)
+        header = BoxLayout(size_hint_y=None, height=scaled(44), spacing=scaled(6))
+        back_btn = StoneButton(text="Back", size_hint_x=None, width=scaled(80))
         back_btn.bind(on_release=lambda _: self._go_back())
         header.add_widget(back_btn)
         self._title = Label(
             text="New Deck", font_size=FONT_SIZE_TITLE - 2, color=TEXT_PRIMARY, bold=True,
         )
         header.add_widget(self._title)
-        save_btn = StoneButton(text="Save", size_hint_x=None, width=80)
+        save_btn = StoneButton(text="Save", size_hint_x=None, width=scaled(80))
         save_btn.bind(on_release=lambda _: self._save())
         header.add_widget(save_btn)
         column.add_widget(header)
@@ -78,13 +79,13 @@ class DeckEditorScreen(Screen):
         # Validation line
         self._status = Label(
             text="", font_size=FONT_SIZE_SMALL, color=TEXT_SUCCESS,
-            size_hint_y=None, height=20, halign="left",
+            size_hint_y=None, height=scaled(20), halign="left",
         )
         self._status.bind(size=self._status.setter("text_size"))
         column.add_widget(self._status)
 
         # Tabs
-        tabs = BoxLayout(size_hint_y=None, height=36, spacing=4)
+        tabs = BoxLayout(size_hint_y=None, height=scaled(36), spacing=scaled(4))
         for tab_name in ["Main", "Extra", "Side"]:
             btn = StoneButton(text=tab_name, font_size=14)
             btn.bind(on_release=lambda _, t=tab_name.lower(): self._show_tab(t))
@@ -98,7 +99,7 @@ class DeckEditorScreen(Screen):
         column.add_widget(deck_panel)
 
         # Search bar
-        search_row = BoxLayout(size_hint_y=None, height=40, spacing=6)
+        search_row = BoxLayout(size_hint_y=None, height=scaled(40), spacing=scaled(6))
         self._search_input = TextInput(
             hint_text="Search cards...",
             multiline=False,
@@ -109,7 +110,7 @@ class DeckEditorScreen(Screen):
         )
         self._search_input.bind(on_text_validate=lambda _: self._do_search())
         search_row.add_widget(self._search_input)
-        search_btn = StoneButton(text="Search", size_hint_x=None, width=90)
+        search_btn = StoneButton(text="Search", size_hint_x=None, width=scaled(90))
         search_btn.bind(on_release=lambda _: self._do_search())
         search_row.add_widget(search_btn)
         column.add_widget(search_row)
