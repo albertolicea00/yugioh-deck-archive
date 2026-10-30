@@ -14,8 +14,8 @@ BG_HORIZONTAL = os.path.join(ASSETS_DIR, "backgrounds", "background-menu-h.jpeg"
 FRAME_RESTING = os.path.join(ASSETS_DIR, "frames", "frame-menu.png")
 FRAME_ACTIVE = os.path.join(ASSETS_DIR, "frames", "frame-menu-active.png")
 
-VIDEO_VERTICAL = os.path.join(ASSETS_DIR, "videos", "background-menu-v.mp4")
-VIDEO_HORIZONTAL = os.path.join(ASSETS_DIR, "videos", "background-menu-h.mp4")
+VIDEO_VERTICAL = os.path.join(ASSETS_DIR, "videos", "background-menu-v-pingpong.mp4")
+VIDEO_HORIZONTAL = os.path.join(ASSETS_DIR, "videos", "background-menu-h-pingpong.mp4")
 MENU_BGM = os.path.join(ASSETS_DIR, "sounds", "menu-bgm.mp3")
 PAPYRUS_PATH = "/System/Library/Fonts/Supplemental/Papyrus.ttc"
 
