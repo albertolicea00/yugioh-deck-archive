@@ -49,6 +49,8 @@ class DeckManagerApp(App):
 
     def build(self):
         Window.clearcolor = (0.06, 0.04, 0.03, 1)
+        Window.minimum_width = 480
+        Window.minimum_height = 820
 
         settings_path = os.path.join(ROOT_DIR, "data", "settings.json")
         self._app_settings = AppSettings(settings_path)
