@@ -14,7 +14,7 @@ from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
 
 from widgets.stone_button import StoneButton
-from widgets.themed_scroll import ThemedScroll
+from kivy.uix.scrollview import ScrollView
 from theme import (
     BG_VERTICAL, BG_HORIZONTAL, VIDEO_VERTICAL, VIDEO_HORIZONTAL, MENU_BGM,
     SCRIM, TEXT_PRIMARY, GOLD_DIM,
@@ -66,14 +66,6 @@ class MainMenuScreen(Screen):
         )
         self._root.add_widget(scrim)
 
-        column = BoxLayout(
-            orientation="vertical",
-            size_hint=(None, 0.92),
-            pos_hint={"center_x": 0.5, "center_y": 0.47},
-            spacing=scaled(10),
-            padding=[0, scaled(20)],
-        )
-
         face = menu_font()
 
         title = Label(
@@ -98,32 +90,72 @@ class MainMenuScreen(Screen):
         if face:
             subtitle.font_name = face
 
-        column.add_widget(title)
-        column.add_widget(subtitle)
-        column.add_widget(Widget(size_hint_y=None, height=scaled(10)))
+        self._top_margin = scaled(50)
+        self._title_zone = scaled(132)
+        self._fade_h = scaled(50)
+        self._status_h = scaled(36)
 
-        # Scrollable button area
+        column = FloatLayout(
+            size_hint=(None, 1),
+            pos_hint={"center_x": 0.5},
+        )
+
         btn_list = BoxLayout(
             orientation="vertical", size_hint_y=None,
             spacing=scaled(10),
+            padding=[0, self._top_margin + self._title_zone + self._fade_h,
+                     0, self._status_h + self._fade_h],
         )
         for entry in MENU_ENTRIES:
             btn = StoneButton(text=entry["label"])
             btn.bind(on_release=lambda _, eid=entry["id"]: self._navigate(eid))
             btn_list.add_widget(btn)
-        btn_list.height = sum(c.height for c in btn_list.children) + btn_list.spacing * (len(btn_list.children) - 1)
         btn_list.bind(minimum_height=btn_list.setter("height"))
 
-        scroll = ThemedScroll(do_scroll_x=False)
+        scroll = ScrollView(
+            do_scroll_x=False, bar_width=0,
+            scroll_type=["content"],
+            size_hint=(1, 1), pos_hint={"x": 0, "y": 0},
+        )
         scroll.add_widget(btn_list)
         column.add_widget(scroll)
+
+        self._top_fade = Widget(
+            size_hint=(1, None),
+            height=self._top_margin + self._title_zone + self._fade_h,
+            pos_hint={"x": 0, "top": 1},
+        )
+        column.add_widget(self._top_fade)
+
+        self._bot_fade = Widget(
+            size_hint=(1, None),
+            height=self._status_h + self._fade_h,
+            pos_hint={"x": 0, "y": 0},
+        )
+        column.add_widget(self._bot_fade)
+
+        self._top_fade.bind(pos=self._redraw_fades, size=self._redraw_fades)
+        self._bot_fade.bind(pos=self._redraw_fades, size=self._redraw_fades)
+
+        title_box = BoxLayout(
+            orientation="vertical",
+            size_hint=(1, None),
+            height=scaled(112) + self._top_margin,
+            pos_hint={"center_x": 0.5, "top": 1},
+            spacing=scaled(10),
+            padding=[0, self._top_margin + scaled(20), 0, 0],
+        )
+        title_box.add_widget(title)
+        title_box.add_widget(subtitle)
+        column.add_widget(title_box)
 
         self._status = Label(
             text="",
             font_size=FONT_SIZE_SMALL,
             color=GOLD_DIM,
-            size_hint_y=None,
-            height=scaled(36),
+            size_hint=(1, None),
+            height=self._status_h,
+            pos_hint={"x": 0, "y": 0},
         )
         if face:
             self._status.font_name = face
@@ -210,6 +242,40 @@ class MainMenuScreen(Screen):
             return
         parent_w = self._column.parent.width
         self._column.width = min(MAX_COLUMN_WIDTH, parent_w * 0.85)
+
+    def _redraw_fades(self, *_):
+        steps = 10
+        bg = (0.06, 0.04, 0.03)
+        max_a = 0.12
+        fade_h = self._fade_h
+        step_h = fade_h / steps
+
+        w = self._top_fade
+        w.canvas.clear()
+        with w.canvas:
+            for i in range(steps):
+                Color(*bg, (i / steps) * max_a)
+                Rectangle(
+                    pos=(w.x, w.y + step_h * i),
+                    size=(w.width, step_h),
+                )
+            Color(*bg, max_a)
+            Rectangle(
+                pos=(w.x, w.y + fade_h),
+                size=(w.width, self._top_margin + self._title_zone),
+            )
+
+        w2 = self._bot_fade
+        w2.canvas.clear()
+        with w2.canvas:
+            Color(*bg, max_a)
+            Rectangle(pos=(w2.x, w2.y), size=(w2.width, self._status_h))
+            for i in range(steps):
+                Color(*bg, (1.0 - i / steps) * max_a)
+                Rectangle(
+                    pos=(w2.x, w2.y + self._status_h + step_h * i),
+                    size=(w2.width, step_h),
+                )
 
     def _navigate(self, destination):
         if destination == "games":
