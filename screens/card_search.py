@@ -3,7 +3,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.scrollview import ScrollView
+from widgets.themed_scroll import ThemedScroll
 from kivy.uix.textinput import TextInput
 from kivy.uix.image import Image, AsyncImage
 from kivy.uix.label import Label
@@ -103,7 +103,7 @@ class CardSearchScreen(Screen):
         )
         detail_panel.add_widget(self._card_image)
 
-        detail_scroll = ScrollView(do_scroll_x=False)
+        detail_scroll = ThemedScroll(do_scroll_x=False)
         self._detail = Label(
             text="Select a card to view details",
             font_size=FONT_SIZE_DETAIL,

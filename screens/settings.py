@@ -3,7 +3,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.scrollview import ScrollView
+from widgets.themed_scroll import ThemedScroll
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.slider import Slider
@@ -66,7 +66,7 @@ class SettingsScreen(Screen):
         column.add_widget(header)
 
         panel = StonePanel(orientation="vertical", size_hint=(1, 1))
-        scroll = ScrollView(do_scroll_x=False)
+        scroll = ThemedScroll(do_scroll_x=False)
         content = BoxLayout(
             orientation="vertical", size_hint_y=None, spacing=scaled(8), padding=[scaled(4), scaled(4)],
         )

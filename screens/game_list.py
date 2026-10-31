@@ -4,7 +4,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
-from kivy.uix.scrollview import ScrollView
+from widgets.themed_scroll import ThemedScroll
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
@@ -67,7 +67,7 @@ class GameListScreen(Screen):
         header.add_widget(title_lbl)
         column.add_widget(header)
 
-        scroll = ScrollView(do_scroll_x=False)
+        scroll = ThemedScroll(do_scroll_x=False)
         self._grid = GridLayout(
             cols=2,
             size_hint_y=None,

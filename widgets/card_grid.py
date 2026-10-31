@@ -1,6 +1,6 @@
 """Scrollable grid of card images with selection support."""
 
-from kivy.uix.scrollview import ScrollView
+from widgets.themed_scroll import ThemedScroll
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.image import AsyncImage
 from kivy.uix.label import Label
@@ -69,7 +69,7 @@ class CardCell(ButtonBehavior, BoxLayout):
                 )
 
 
-class CardGrid(ScrollView):
+class CardGrid(ThemedScroll):
     def __init__(self, columns=4, **kwargs):
         super().__init__(**kwargs)
         self.do_scroll_x = False

@@ -3,7 +3,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.scrollview import ScrollView
+from widgets.themed_scroll import ThemedScroll
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
@@ -65,7 +65,7 @@ class DeckListScreen(Screen):
 
         # Deck list
         panel = StonePanel(orientation="vertical", size_hint=(1, 1))
-        scroll = ScrollView(do_scroll_x=False)
+        scroll = ThemedScroll(do_scroll_x=False)
         self._list = BoxLayout(
             orientation="vertical", size_hint_y=None, spacing=scaled(6), padding=[scaled(4), scaled(4)],
         )
