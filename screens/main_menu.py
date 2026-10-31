@@ -31,7 +31,7 @@ MENU_ENTRIES = [
     {"id": "settings", "label": "Settings"},
 ]
 
-MAX_COLUMN_WIDTH = scaled(520)
+MAX_COLUMN_WIDTH = scaled(380)
 
 
 class MainMenuScreen(Screen):
