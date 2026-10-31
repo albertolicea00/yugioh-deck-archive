@@ -104,7 +104,7 @@ class MainMenuScreen(Screen):
             orientation="vertical", size_hint_y=None,
             spacing=scaled(10),
             padding=[0, self._top_margin + self._title_zone + scaled(20),
-                     0, self._status_h + scaled(20)],
+                     0, scaled(10)],
         )
         for entry in MENU_ENTRIES:
             btn = StoneButton(text=entry["label"])
@@ -235,33 +235,22 @@ class MainMenuScreen(Screen):
     def _on_menu_scroll(self, *_):
         fade_h = self._fade_h
         tb = self._title_box
-        st = self._status
-        if not tb.parent or not st.parent:
+        if not tb.parent:
             return
 
         _, title_bot = tb.to_window(0, tb.y)
-        _, status_top = st.to_window(0, st.top)
-
         top_edge = title_bot - scaled(30)
-        bot_edge = status_top + scaled(20)
 
         for btn in self._btn_list.children:
             _, btn_top = btn.to_window(0, btn.top)
-            _, btn_bot = btn.to_window(0, btn.y)
             btn_h = max(btn.height, 1)
 
-            vis_top = min(btn_top, top_edge)
-            vis_bot = max(btn_bot, bot_edge)
-            visible = max(0, vis_top - vis_bot) / btn_h
-
-            if btn_top > top_edge:
-                dist = (btn_top - top_edge) / fade_h
-                visible *= max(0, 1 - dist)
-            if btn_bot < bot_edge:
-                dist = (bot_edge - btn_bot) / fade_h
-                visible *= max(0, 1 - dist)
-
-            btn.opacity = max(0, min(1, visible))
+            if btn_top <= top_edge:
+                btn.opacity = 1
+            else:
+                vis = min(btn_top, top_edge + fade_h)
+                dist = (vis - top_edge) / fade_h
+                btn.opacity = max(0, 1 - dist)
 
 
     def _navigate(self, destination):
@@ -284,7 +273,7 @@ class MainMenuScreen(Screen):
         self._title_box.padding = [0, margin + scaled(20), 0, 0]
         self._btn_list.padding = [
             0, margin + self._title_zone + scaled(20),
-            0, self._status_h + scaled(20),
+            0, scaled(10),
         ]
 
     def _on_window_resize(self, window, size):
