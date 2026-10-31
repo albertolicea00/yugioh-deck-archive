@@ -133,14 +133,13 @@ class DeckViewScreen(Screen):
         if self._deck is None:
             return
         cards = self._deck.get(tab, [])
-        unique = count_unique(cards)
 
         def name_fn(cid):
             if self._card_db:
                 return self._card_db.get_name(cid)
             return str(cid)
 
-        display = [(cid, name_fn(cid), n) for cid, n in unique]
+        display = [(cid, name_fn(cid), 1) for cid in cards]
         self._grid.set_cards(display, image_fn=card_image_url)
 
     def _edit(self):
