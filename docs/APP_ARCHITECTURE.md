@@ -89,10 +89,19 @@ MainMenu
 ├── DeckEditor (new deck)
 ├── CardSearch
 ├── ImportExport
-└── Settings (planned)
+└── Settings
 ```
 
 All navigation uses Kivy `ScreenManager`. Screens receive dependencies (deck_manager, card_db) via constructor injection.
+
+### DeckView vs DeckEditor
+
+These are intentionally separate screens with no shared base class:
+
+- **DeckView** — read-only. Split layout: card grid (left) + card preview with full image and description (right). Browse deck contents, tap to inspect.
+- **DeckEditor** — read-write. Search bar, add/remove cards, save, validate. Separate UI tailored to editing workflow.
+
+Both use generic widgets (`CardGrid`, `StonePanel`, `ThemedScroll`) but no shared deck-screen logic. They will diverge further as features are added.
 
 ---
 
