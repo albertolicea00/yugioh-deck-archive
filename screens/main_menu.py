@@ -103,8 +103,8 @@ class MainMenuScreen(Screen):
         btn_list = BoxLayout(
             orientation="vertical", size_hint_y=None,
             spacing=scaled(10),
-            padding=[0, self._top_margin + self._title_zone + self._fade_h,
-                     0, self._status_h + self._fade_h],
+            padding=[0, self._top_margin + self._title_zone + scaled(20),
+                     0, self._status_h + scaled(20)],
         )
         for entry in MENU_ENTRIES:
             btn = StoneButton(text=entry["label"])
@@ -283,8 +283,8 @@ class MainMenuScreen(Screen):
         self._title_box.height = scaled(112) + margin
         self._title_box.padding = [0, margin + scaled(20), 0, 0]
         self._btn_list.padding = [
-            0, margin + self._title_zone + self._fade_h,
-            0, self._status_h + self._fade_h,
+            0, margin + self._title_zone + scaled(20),
+            0, self._status_h + scaled(20),
         ]
 
     def _on_window_resize(self, window, size):
