@@ -1,22 +1,25 @@
-"""Deck list — decks within a selected game."""
+"""Deck list — decks within a selected game, shown as framed tiles."""
 
 from kivy.uix.screenmanager import Screen
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 from widgets.themed_scroll import ThemedScroll
 from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle
+from kivy.core.window import Window
 
 from widgets.stone_button import StoneButton
-from widgets.stone_panel import StonePanel
-from widgets.list_item import ListItem
+from widgets.deck_tile import DeckTile
 from theme import (
     scaled,
-    BG_VERTICAL, SCRIM, TEXT_PRIMARY, TEXT_SECONDARY, TEXT_WARNING,
-    FONT_SIZE_TITLE, FONT_SIZE_LIST, FONT_SIZE_SMALL, GOLD_DIM,
+    BG_VERTICAL, BG_HORIZONTAL, SCRIM, TEXT_PRIMARY, TEXT_SECONDARY,
+    FONT_SIZE_TITLE, FONT_SIZE_LIST, menu_font,
 )
+
+TILE_BASE_RATIO = 0.94
 
 
 class DeckListScreen(Screen):
@@ -24,6 +27,7 @@ class DeckListScreen(Screen):
         super().__init__(name="deck_list", **kwargs)
         self._dm = deck_manager
         self._game = None
+        self._decks = []
         self._build_ui()
 
     def set_game(self, game):
@@ -32,8 +36,8 @@ class DeckListScreen(Screen):
     def _build_ui(self):
         root = FloatLayout()
 
-        bg = Image(source=BG_VERTICAL, fit_mode="cover", size_hint=(1, 1))
-        root.add_widget(bg)
+        self._bg = Image(source=BG_VERTICAL, fit_mode="cover", size_hint=(1, 1))
+        root.add_widget(self._bg)
 
         scrim = Widget(size_hint=(1, 1))
         with scrim.canvas:
@@ -47,67 +51,91 @@ class DeckListScreen(Screen):
 
         column = BoxLayout(
             orientation="vertical",
-            size_hint=(0.92, 0.92),
+            size_hint=(0.94, 0.94),
             pos_hint={"center_x": 0.5, "center_y": 0.5},
-            spacing=scaled(8),
+            spacing=8,
         )
 
-        # Header
+        face = menu_font()
+
         header = BoxLayout(size_hint_y=None, height=scaled(50), spacing=scaled(10))
         back_btn = StoneButton(text="Back", size_hint_x=None, width=scaled(100))
         back_btn.bind(on_release=lambda _: setattr(self.manager, "current", "game_list"))
         header.add_widget(back_btn)
         self._title = Label(
-            text="Decks", font_size=FONT_SIZE_TITLE, color=TEXT_PRIMARY, bold=True,
+            text="Decks", font_size=FONT_SIZE_TITLE, color=TEXT_PRIMARY,
+            bold=not face,
         )
+        if face:
+            self._title.font_name = face
         header.add_widget(self._title)
         column.add_widget(header)
 
-        # Deck list
-        panel = StonePanel(orientation="vertical", size_hint=(1, 1))
         scroll = ThemedScroll(do_scroll_x=False)
-        self._list = BoxLayout(
-            orientation="vertical", size_hint_y=None, spacing=scaled(6), padding=[scaled(4), scaled(4)],
+        self._grid = GridLayout(
+            cols=2,
+            size_hint_y=None,
+            spacing=scaled(10),
+            padding=[scaled(8), scaled(8), scaled(20), scaled(8)],
         )
-        self._list.bind(minimum_height=self._list.setter("height"))
-        scroll.add_widget(self._list)
-        panel.add_widget(scroll)
-        column.add_widget(panel)
+        self._grid.bind(minimum_height=self._grid.setter("height"))
+        scroll.add_widget(self._grid)
+        column.add_widget(scroll)
 
         root.add_widget(column)
         self.add_widget(root)
 
+        Window.bind(size=self._on_resize)
+
     def on_enter(self):
         self._refresh()
 
+    def _on_resize(self, window, size):
+        w, h = size
+        self._bg.source = BG_VERTICAL if h >= w else BG_HORIZONTAL
+        avail = w * TILE_BASE_RATIO
+        min_w = max(550, int(w * 0.20))
+        cols = max(1, int(avail / min_w))
+        if self._grid.cols != cols:
+            self._grid.cols = cols
+            if self._decks:
+                self._rebuild_grid()
+
     def _refresh(self):
-        self._list.clear_widgets()
+        self._decks = []
+        self._grid.clear_widgets()
         if self._game is None or self._dm is None:
             return
 
         self._title.text = self._game["name"]
-        decks = self._dm.list_decks(self._game["path"])
+        self._decks = self._dm.list_decks(self._game["path"])
 
-        if not decks:
-            self._list.add_widget(Label(
+        if not self._decks:
+            self._grid.cols = 1
+            self._grid.add_widget(Label(
                 text="No decks in this game.",
                 font_size=FONT_SIZE_LIST, color=TEXT_SECONDARY,
-                size_hint_y=None, height=scaled(60), halign="center",
+                size_hint_y=None, height=scaled(80), halign="center",
             ))
             return
 
-        for deck in decks:
-            main_c, extra_c, side_c = deck["main"], deck["extra"], deck["side"]
-            warning = ""
-            if main_c < 40:
-                warning = "  [short]"
-            elif main_c > 60:
-                warning = "  [over]"
+        w = Window.width
+        avail = w * TILE_BASE_RATIO
+        min_w = max(550, int(w * 0.20))
+        self._grid.cols = max(1, int(avail / min_w))
+        self._rebuild_grid()
 
-            label = f"{deck['name']}  ({main_c}/{extra_c}/{side_c}){warning}"
-            item = ListItem(text=label)
-            item.bind(on_release=lambda _, d=deck: self._open_deck(d))
-            self._list.add_widget(item)
+    def _rebuild_grid(self):
+        self._grid.clear_widgets()
+        for deck in self._decks:
+            tile = DeckTile(
+                deck_name=deck["name"],
+                main_count=deck["main"],
+                extra_count=deck["extra"],
+                side_count=deck["side"],
+            )
+            tile.bind(on_release=lambda _, d=deck: self._open_deck(d))
+            self._grid.add_widget(tile)
 
     def _open_deck(self, deck_info):
         view = self.manager.get_screen("deck_view")
