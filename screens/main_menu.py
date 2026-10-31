@@ -86,7 +86,7 @@ class MainMenuScreen(Screen):
             title.font_name = face
 
         subtitle = Label(
-            text="Deck Manager",
+            text="Deck Archive",
             font_size=FONT_SIZE_TITLE,
             color=GOLD_DIM,
             bold=not face,

@@ -1,6 +1,6 @@
 # App Build Guide
 
-> How to build the Yu-Gi-Oh! Deck Manager for mobile and desktop
+> How to build the Yu-Gi-Oh! Deck Archive for mobile and desktop
 
 ---
 
@@ -20,7 +20,7 @@ Use PyInstaller to create a distributable binary:
 pip install pyinstaller
 
 pyinstaller --onefile --windowed \
-  --name "YGO Deck Manager" \
+  --name "YGO Deck Archive" \
   --icon assets/icons/app-icon.ico \
   --add-data "assets:assets" \
   --add-data "theme:theme" \
@@ -54,7 +54,7 @@ Key settings to update in the generated `buildozer.spec`:
 
 ```ini
 [app]
-title = YGO Deck Manager
+title = YGO Deck Archive
 package.name = ygodeckmanager
 package.domain = com.yugioh
 source.dir = .

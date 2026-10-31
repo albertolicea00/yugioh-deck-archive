@@ -1,6 +1,6 @@
 # App Architecture
 
-> Yu-Gi-Oh! Deck Manager — Kivy cross-platform application
+> Yu-Gi-Oh! Deck Archive — Kivy cross-platform application
 
 ---
 

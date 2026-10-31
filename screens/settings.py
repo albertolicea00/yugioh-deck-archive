@@ -140,7 +140,7 @@ class SettingsScreen(Screen):
         # --- Preview ---
         content.add_widget(self._section_label("Preview", face))
         self._preview = Label(
-            text="Yu-Gi-Oh! Deck Manager\nThis is how text will look at this scale.",
+            text="Yu-Gi-Oh! Deck Archive\nThis is how text will look at this scale.",
             font_size=FONT_SIZE_LIST, color=TEXT_PRIMARY,
             size_hint_y=None, height=scaled(80), halign="center", valign="middle",
         )

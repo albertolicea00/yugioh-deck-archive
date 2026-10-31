@@ -1,4 +1,4 @@
-"""Yu-Gi-Oh! Deck Manager — Kivy app entry point."""
+"""Yu-Gi-Oh! Deck Archive — Kivy app entry point."""
 
 import os
 import sys
@@ -14,6 +14,14 @@ CARD_DB_PATH = os.path.join(ROOT_DIR, "data", "cards.cdb")
 CACHE_DIR = os.path.join(ROOT_DIR, "data", "cache")
 
 os.environ.setdefault("KIVY_VIDEO", "ffpyplayer")
+
+if sys.platform == "darwin":
+    try:
+        from AppKit import NSBundle
+        info = NSBundle.mainBundle().infoDictionary()
+        info["CFBundleName"] = "YGO Deck Archive"
+    except Exception:
+        pass
 
 from kivy.config import Config
 Config.set("kivy", "window_icon", os.path.join(ROOT_DIR, "assets", "icons", "app-icon.png"))
@@ -36,7 +44,7 @@ from core.app_settings import AppSettings
 
 
 class DeckManagerApp(App):
-    title = "Yu-Gi-Oh! Deck Manager"
+    title = "Yu-Gi-Oh! Deck Archive"
 
     def build(self):
         Window.clearcolor = (0.06, 0.04, 0.03, 1)

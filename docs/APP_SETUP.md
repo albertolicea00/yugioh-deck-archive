@@ -1,6 +1,6 @@
 # App Setup Guide
 
-> How to set up and run the Yu-Gi-Oh! Deck Manager app
+> How to set up and run the Yu-Gi-Oh! Deck Archive app
 
 ---
 
