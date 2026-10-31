@@ -71,30 +71,30 @@ class MainMenuScreen(Screen):
 
         self._title_label = Label(
             text="Yu-Gi-Oh!",
-            font_size=scaled(122),
+            font_size=60,
             color=TEXT_PRIMARY,
             bold=not face,
             size_hint_y=None,
-            height=scaled(38),
+            height=20,
         )
         if face:
             self._title_label.font_name = face
 
         self._subtitle_label = Label(
             text="Deck Archive",
-            font_size=scaled(40),
+            font_size=20,
             color=TEXT_PRIMARY,
             bold=not face,
             size_hint_y=None,
-            height=scaled(44),
+            height=22,
         )
         if face:
             self._subtitle_label.font_name = face
 
-        self._top_margin = scaled(50)
-        self._title_zone = scaled(132)
-        self._fade_h = scaled(140)
-        self._status_h = scaled(36)
+        self._top_margin = 50
+        self._title_zone = 100
+        self._fade_h = 80
+        self._status_h = 36
 
         column = FloatLayout(
             size_hint=(None, 1),
@@ -103,12 +103,13 @@ class MainMenuScreen(Screen):
 
         btn_list = BoxLayout(
             orientation="vertical", size_hint_y=None,
-            spacing=scaled(10),
-            padding=[0, self._top_margin + self._title_zone + scaled(20),
-                     0, scaled(10)],
+            spacing=10,
+            padding=[0, 100, 0, 5],
         )
         for entry in MENU_ENTRIES:
             btn = StoneButton(text=entry["label"])
+            btn.height = 60
+            btn.font_size = 20
             btn.bind(on_release=lambda _, eid=entry["id"]: self._navigate(eid))
             btn_list.add_widget(btn)
         btn_list.bind(minimum_height=btn_list.setter("height"))
@@ -129,10 +130,10 @@ class MainMenuScreen(Screen):
         title_box = BoxLayout(
             orientation="vertical",
             size_hint=(1, None),
-            height=scaled(112) + self._top_margin,
+            height=100,
             pos_hint={"center_x": 0.5, "top": 1},
-            spacing=scaled(10),
-            padding=[0, self._top_margin + scaled(20), 0, 0],
+            spacing=5,
+            padding=[0, 60, 0, 0],
         )
         title_box.add_widget(self._title_label)
         title_box.add_widget(self._subtitle_label)
@@ -141,17 +142,17 @@ class MainMenuScreen(Screen):
 
         self._status = Label(
             text="",
-            font_size=FONT_SIZE_SMALL,
+            font_size=14,
             color=GOLD_DIM,
             size_hint=(1, None),
-            height=self._status_h,
+            height=20,
             pos_hint={"x": 0, "y": 0},
         )
         if face:
             self._status.font_name = face
         column.add_widget(self._status)
 
-        column.width = MAX_COLUMN_WIDTH
+        column.width = int(Window.width * 0.65) if Window.height >= Window.width else int(Window.width * 0.40)
         column.bind(parent=self._clamp_width)
         column.bind(size=lambda *_: self._deferred_layout())
         self._root.bind(size=lambda *_: self._clamp_width())
@@ -161,7 +162,9 @@ class MainMenuScreen(Screen):
         self.add_widget(self._root)
 
         Window.bind(size=self._on_window_resize)
+        self._deferred_layout()
         Clock.schedule_once(self._deferred_layout, 0)
+        Clock.schedule_once(self._deferred_layout, 0.15)
 
     def _use_video(self):
         if not self._app_settings:
@@ -174,7 +177,9 @@ class MainMenuScreen(Screen):
         return self._app_settings.get("background_music", True) and os.path.exists(MENU_BGM)
 
     def on_enter(self):
+        Clock.schedule_once(self._deferred_layout, -1)
         Clock.schedule_once(self._deferred_layout, 0)
+        Clock.schedule_once(self._deferred_layout, 0.1)
         if self._use_video():
             self._start_video()
         else:
@@ -231,10 +236,10 @@ class MainMenuScreen(Screen):
             self._bgm.stop()
 
     def _clamp_width(self, *_):
-        if not hasattr(self, "_column") or not self._column.parent:
+        if not hasattr(self, "_column"):
             return
-        pw = self._column.parent.width
-        ph = self._column.parent.height or Window.height
+        pw = self._column.parent.width if self._column.parent else Window.width
+        ph = self._column.parent.height if self._column.parent else Window.height
         if ph >= pw:
             col_w = int(pw * 0.78)
         else:
