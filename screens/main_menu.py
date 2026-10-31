@@ -77,29 +77,29 @@ class MainMenuScreen(Screen):
 
         title = Label(
             text="Yu-Gi-Oh!",
-            font_size=FONT_SIZE_TITLE + scaled(18),
+            font_size=scaled(122),
             color=TEXT_PRIMARY,
             bold=not face,
             size_hint_y=None,
-            height=scaled(60),
+            height=scaled(38),
         )
         if face:
             title.font_name = face
 
         subtitle = Label(
             text="Deck Archive",
-            font_size=FONT_SIZE_TITLE,
-            color=GOLD_DIM,
+            font_size=scaled(40),
+            color=TEXT_PRIMARY,
             bold=not face,
             size_hint_y=None,
-            height=scaled(36),
+            height=scaled(44),
         )
         if face:
             subtitle.font_name = face
 
         column.add_widget(title)
         column.add_widget(subtitle)
-        column.add_widget(Widget(size_hint_y=None, height=scaled(16)))
+        column.add_widget(Widget(size_hint_y=None, height=scaled(10)))
 
         for entry in MENU_ENTRIES:
             btn = StoneButton(text=entry["label"])
