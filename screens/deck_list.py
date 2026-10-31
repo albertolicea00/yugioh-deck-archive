@@ -11,12 +11,12 @@ from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle
 from kivy.core.window import Window
 
-from widgets.stone_button import StoneButton
 from widgets.deck_tile import DeckTile
+from widgets.breadcrumb_bar import BreadcrumbBar
 from theme import (
     scaled,
-    BG_VERTICAL, BG_HORIZONTAL, SCRIM, TEXT_PRIMARY, TEXT_SECONDARY,
-    FONT_SIZE_TITLE, FONT_SIZE_LIST, menu_font,
+    BG_VERTICAL, BG_HORIZONTAL, SCRIM, TEXT_SECONDARY,
+    FONT_SIZE_LIST,
 )
 
 TILE_BASE_RATIO = 0.94
@@ -56,20 +56,9 @@ class DeckListScreen(Screen):
             spacing=8,
         )
 
-        face = menu_font()
-
-        header = BoxLayout(size_hint_y=None, height=scaled(50), spacing=scaled(10))
-        back_btn = StoneButton(text="Back", size_hint_x=None, width=scaled(100))
-        back_btn.bind(on_release=lambda _: setattr(self.manager, "current", "game_list"))
-        header.add_widget(back_btn)
-        self._title = Label(
-            text="Decks", font_size=FONT_SIZE_TITLE, color=TEXT_PRIMARY,
-            bold=not face,
-        )
-        if face:
-            self._title.font_name = face
-        header.add_widget(self._title)
-        column.add_widget(header)
+        self._breadcrumb = BreadcrumbBar(height=scaled(40))
+        self._breadcrumb.bind(on_navigate=self._on_breadcrumb_nav)
+        column.add_widget(self._breadcrumb)
 
         scroll = ThemedScroll(do_scroll_x=False)
         self._grid = GridLayout(
@@ -107,7 +96,11 @@ class DeckListScreen(Screen):
         if self._game is None or self._dm is None:
             return
 
-        self._title.text = self._game["name"]
+        self._breadcrumb.set_crumbs([
+            {"label": "Menu", "screen": "main_menu"},
+            {"label": "My Decks", "screen": "game_list"},
+            {"label": self._game["name"], "screen": None},
+        ])
         self._decks = self._dm.list_decks(self._game["path"])
 
         if not self._decks:
@@ -137,7 +130,10 @@ class DeckListScreen(Screen):
             tile.bind(on_release=lambda _, d=deck: self._open_deck(d))
             self._grid.add_widget(tile)
 
+    def _on_breadcrumb_nav(self, _, screen_name):
+        self.manager.current = screen_name
+
     def _open_deck(self, deck_info):
         view = self.manager.get_screen("deck_view")
-        view.set_deck(deck_info)
+        view.set_deck(deck_info, game_name=self._game["name"] if self._game else "")
         self.manager.current = "deck_view"

@@ -11,12 +11,12 @@ from kivy.uix.widget import Widget
 from kivy.graphics import Color, Rectangle
 from kivy.core.window import Window
 
-from widgets.stone_button import StoneButton
 from widgets.game_tile import GameTile
+from widgets.breadcrumb_bar import BreadcrumbBar
 from theme import (
     scaled,
-    BG_VERTICAL, BG_HORIZONTAL, SCRIM, TEXT_PRIMARY, TEXT_SECONDARY, GOLD_DIM,
-    FONT_SIZE_TITLE, FONT_SIZE_LIST, FONT_SIZE_SMALL, menu_font,
+    BG_VERTICAL, BG_HORIZONTAL, SCRIM, TEXT_SECONDARY,
+    FONT_SIZE_LIST,
 )
 
 TILE_BASE_RATIO = 0.94
@@ -52,20 +52,13 @@ class GameListScreen(Screen):
             spacing=8,
         )
 
-        face = menu_font()
-
-        header = BoxLayout(size_hint_y=None, height=scaled(50), spacing=scaled(10))
-        back_btn = StoneButton(text="Back", size_hint_x=None, width=scaled(100))
-        back_btn.bind(on_release=lambda _: setattr(self.manager, "current", "main_menu"))
-        header.add_widget(back_btn)
-        title_lbl = Label(
-            text="My Decks", font_size=FONT_SIZE_TITLE, color=TEXT_PRIMARY,
-            bold=not face,
-        )
-        if face:
-            title_lbl.font_name = face
-        header.add_widget(title_lbl)
-        column.add_widget(header)
+        self._breadcrumb = BreadcrumbBar(height=scaled(40))
+        self._breadcrumb.set_crumbs([
+            {"label": "Menu", "screen": "main_menu"},
+            {"label": "My Decks", "screen": None},
+        ])
+        self._breadcrumb.bind(on_navigate=self._on_breadcrumb_nav)
+        column.add_widget(self._breadcrumb)
 
         scroll = ThemedScroll(do_scroll_x=False)
         self._grid = GridLayout(
@@ -127,6 +120,9 @@ class GameListScreen(Screen):
             )
             tile.bind(on_release=lambda _, g=game: self._open_game(g))
             self._grid.add_widget(tile)
+
+    def _on_breadcrumb_nav(self, _, screen_name):
+        self.manager.current = screen_name
 
     def _open_game(self, game):
         deck_list = self.manager.get_screen("deck_list")

@@ -11,6 +11,7 @@ from kivy.graphics import Color, Rectangle
 from widgets.stone_button import StoneButton
 from widgets.stone_panel import StonePanel
 from widgets.card_grid import CardGrid
+from widgets.breadcrumb_bar import BreadcrumbBar
 from widgets.themed_scroll import ThemedScroll
 from core.card_api import card_image_url, card_image_url_full
 from theme import (
@@ -33,8 +34,9 @@ class DeckViewScreen(Screen):
         self._current_tab = "main"
         self._build_ui()
 
-    def set_deck(self, deck_info):
+    def set_deck(self, deck_info, game_name=""):
         self._deck_info = deck_info
+        self._game_name = game_name
 
     def _build_ui(self):
         root = FloatLayout()
@@ -61,18 +63,10 @@ class DeckViewScreen(Screen):
 
         face = menu_font()
 
-        # Header
-        header = BoxLayout(size_hint_y=None, height=scaled(50), spacing=scaled(8))
-        back_btn = StoneButton(text="Back", size_hint_x=None, width=scaled(90))
-        back_btn.bind(on_release=lambda _: setattr(self.manager, "current", "deck_list"))
-        header.add_widget(back_btn)
-        self._title = Label(
-            text="Deck", font_size=FONT_SIZE_TITLE, color=TEXT_PRIMARY,
-            bold=not face,
-        )
-        if face:
-            self._title.font_name = face
-        header.add_widget(self._title)
+        header = BoxLayout(size_hint_y=None, height=scaled(40), spacing=scaled(8))
+        self._breadcrumb = BreadcrumbBar(height=scaled(40), size_hint_x=1)
+        self._breadcrumb.bind(on_navigate=self._on_breadcrumb_nav)
+        header.add_widget(self._breadcrumb)
 
         edit_btn = StoneButton(text="Edit", size_hint_x=None, width=scaled(90))
         edit_btn.bind(on_release=lambda _: self._edit())
@@ -147,10 +141,19 @@ class DeckViewScreen(Screen):
     def on_enter(self):
         self._load()
 
+    def _on_breadcrumb_nav(self, _, screen_name):
+        self.manager.current = screen_name
+
     def _load(self):
         if self._deck_info is None or self._dm is None:
             return
-        self._title.text = self._deck_info["name"]
+        game = getattr(self, "_game_name", "")
+        crumbs = [{"label": "Menu", "screen": "main_menu"},
+                  {"label": "My Decks", "screen": "game_list"}]
+        if game:
+            crumbs.append({"label": game, "screen": "deck_list"})
+        crumbs.append({"label": self._deck_info["name"], "screen": None})
+        self._breadcrumb.set_crumbs(crumbs)
         self._deck = self._dm.read_deck(self._deck_info["path"])
         self._card_image.source = ""
         self._detail.text = "Tap a card to view details"
