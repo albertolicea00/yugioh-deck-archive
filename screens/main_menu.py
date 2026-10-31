@@ -92,7 +92,7 @@ class MainMenuScreen(Screen):
 
         self._top_margin = scaled(50)
         self._title_zone = scaled(132)
-        self._fade_h = scaled(50)
+        self._fade_h = scaled(140)
         self._status_h = scaled(36)
 
         column = FloatLayout(
@@ -117,25 +117,25 @@ class MainMenuScreen(Screen):
             scroll_type=["content"],
             size_hint=(1, 1), pos_hint={"x": 0, "y": 0},
         )
+        self._btn_list = btn_list
+        self._scroll = scroll
         scroll.add_widget(btn_list)
         column.add_widget(scroll)
 
-        self._top_fade = Widget(
-            size_hint=(1, None),
-            height=self._top_margin + self._title_zone + self._fade_h,
-            pos_hint={"x": 0, "top": 1},
-        )
-        column.add_widget(self._top_fade)
+        scroll.bind(scroll_y=self._on_menu_scroll)
 
-        self._bot_fade = Widget(
+        self._top_grad = Widget(
             size_hint=(1, None),
-            height=self._status_h + self._fade_h,
-            pos_hint={"x": 0, "y": 0},
+            height=self._fade_h,
+            pos_hint={"x": 0},
         )
-        column.add_widget(self._bot_fade)
-
-        self._top_fade.bind(pos=self._redraw_fades, size=self._redraw_fades)
-        self._bot_fade.bind(pos=self._redraw_fades, size=self._redraw_fades)
+        self._bot_grad = Widget(
+            size_hint=(1, None),
+            height=self._fade_h,
+            pos_hint={"x": 0},
+        )
+        column.add_widget(self._top_grad)
+        column.add_widget(self._bot_grad)
 
         title_box = BoxLayout(
             orientation="vertical",
@@ -147,6 +147,7 @@ class MainMenuScreen(Screen):
         )
         title_box.add_widget(title)
         title_box.add_widget(subtitle)
+        self._title_box = title_box
         column.add_widget(title_box)
 
         self._status = Label(
@@ -243,39 +244,69 @@ class MainMenuScreen(Screen):
         parent_w = self._column.parent.width
         self._column.width = min(MAX_COLUMN_WIDTH, parent_w * 0.85)
 
-    def _redraw_fades(self, *_):
-        steps = 10
-        bg = (0.06, 0.04, 0.03)
-        max_a = 0.12
+    def _on_menu_scroll(self, *_):
         fade_h = self._fade_h
-        step_h = fade_h / steps
+        tb = self._title_box
+        st = self._status
+        if not tb.parent or not st.parent:
+            return
 
-        w = self._top_fade
+        _, title_bot = tb.to_window(0, tb.y)
+        _, status_top = st.to_window(0, st.top)
+
+        top_edge = title_bot - scaled(30)
+        bot_edge = status_top + scaled(20)
+
+        for btn in self._btn_list.children:
+            _, btn_top = btn.to_window(0, btn.top)
+            _, btn_bot = btn.to_window(0, btn.y)
+            btn_h = max(btn.height, 1)
+
+            vis_top = min(btn_top, top_edge)
+            vis_bot = max(btn_bot, bot_edge)
+            visible = max(0, vis_top - vis_bot) / btn_h
+
+            if btn_top > top_edge:
+                dist = (btn_top - top_edge) / fade_h
+                visible *= max(0, 1 - dist)
+            if btn_bot < bot_edge:
+                dist = (bot_edge - btn_bot) / fade_h
+                visible *= max(0, 1 - dist)
+
+            btn.opacity = max(0, min(1, visible))
+
+        self._draw_grad(self._top_grad, top_edge, fade_h, going_up=True)
+        self._draw_grad(self._bot_grad, bot_edge, fade_h, going_up=False)
+
+    def _draw_grad(self, w, edge_y, fade_h, going_up):
         w.canvas.clear()
-        with w.canvas:
-            for i in range(steps):
-                Color(*bg, (i / steps) * max_a)
-                Rectangle(
-                    pos=(w.x, w.y + step_h * i),
-                    size=(w.width, step_h),
-                )
-            Color(*bg, max_a)
-            Rectangle(
-                pos=(w.x, w.y + fade_h),
-                size=(w.width, self._top_margin + self._title_zone),
-            )
+        steps = 12
+        step_h = fade_h / steps
+        bg = (0.06, 0.04, 0.03)
+        max_a = 0.25
 
-        w2 = self._bot_fade
-        w2.canvas.clear()
-        with w2.canvas:
-            Color(*bg, max_a)
-            Rectangle(pos=(w2.x, w2.y), size=(w2.width, self._status_h))
+        _, wy = w.parent.to_window(0, 0)
+
+        if going_up:
+            w.y = w.parent.y + (edge_y - wy) - fade_h
             for i in range(steps):
-                Color(*bg, (1.0 - i / steps) * max_a)
-                Rectangle(
-                    pos=(w2.x, w2.y + self._status_h + step_h * i),
-                    size=(w2.width, step_h),
-                )
+                a = ((i + 1) / steps) * max_a
+                with w.canvas:
+                    Color(*bg, a)
+                    Rectangle(
+                        pos=(w.x, w.y + step_h * i),
+                        size=(w.width, step_h + 1),
+                    )
+        else:
+            w.y = w.parent.y + (edge_y - wy)
+            for i in range(steps):
+                a = (1 - i / steps) * max_a
+                with w.canvas:
+                    Color(*bg, a)
+                    Rectangle(
+                        pos=(w.x, w.y + step_h * i),
+                        size=(w.width, step_h + 1),
+                    )
 
     def _navigate(self, destination):
         if destination == "games":
