@@ -14,6 +14,7 @@ from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
 
 from widgets.stone_button import StoneButton
+from widgets.themed_scroll import ThemedScroll
 from theme import (
     BG_VERTICAL, BG_HORIZONTAL, VIDEO_VERTICAL, VIDEO_HORIZONTAL, MENU_BGM,
     SCRIM, TEXT_PRIMARY, GOLD_DIM,
@@ -67,8 +68,8 @@ class MainMenuScreen(Screen):
 
         column = BoxLayout(
             orientation="vertical",
-            size_hint=(None, None),
-            pos_hint={"center_x": 0.5, "center_y": 0.5},
+            size_hint=(None, 0.92),
+            pos_hint={"center_x": 0.5, "center_y": 0.47},
             spacing=scaled(10),
             padding=[0, scaled(20)],
         )
@@ -101,23 +102,33 @@ class MainMenuScreen(Screen):
         column.add_widget(subtitle)
         column.add_widget(Widget(size_hint_y=None, height=scaled(10)))
 
+        # Scrollable button area
+        btn_list = BoxLayout(
+            orientation="vertical", size_hint_y=None,
+            spacing=scaled(10),
+        )
         for entry in MENU_ENTRIES:
             btn = StoneButton(text=entry["label"])
             btn.bind(on_release=lambda _, eid=entry["id"]: self._navigate(eid))
-            column.add_widget(btn)
+            btn_list.add_widget(btn)
+        btn_list.height = sum(c.height for c in btn_list.children) + btn_list.spacing * (len(btn_list.children) - 1)
+        btn_list.bind(minimum_height=btn_list.setter("height"))
+
+        scroll = ThemedScroll(do_scroll_x=False)
+        scroll.add_widget(btn_list)
+        column.add_widget(scroll)
 
         self._status = Label(
             text="",
             font_size=FONT_SIZE_SMALL,
             color=GOLD_DIM,
             size_hint_y=None,
-            height=scaled(56),
+            height=scaled(36),
         )
         if face:
             self._status.font_name = face
         column.add_widget(self._status)
 
-        column.height = sum(c.height for c in column.children) + column.spacing * len(column.children)
         column.width = MAX_COLUMN_WIDTH
         column.bind(parent=self._clamp_width)
         self._root.bind(size=lambda *_: self._clamp_width())
