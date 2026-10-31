@@ -89,6 +89,7 @@ MainMenu
 ├── DeckEditor (new deck)
 ├── CardSearch
 ├── ImportExport
+├── Resources
 └── Settings
 ```
 

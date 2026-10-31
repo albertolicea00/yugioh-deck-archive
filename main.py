@@ -37,6 +37,7 @@ from screens.deck_view import DeckViewScreen
 from screens.deck_editor import DeckEditorScreen
 from screens.card_search import CardSearchScreen
 from screens.import_export import ImportExportScreen
+from screens.resource_packs import ResourcePacksScreen
 from screens.settings import SettingsScreen
 from core.deck_manager import DeckManager
 from core.card_db import CardDB
@@ -70,6 +71,7 @@ class DeckManagerApp(App):
         sm.add_widget(DeckEditorScreen(deck_manager=self._dm, card_db=self._card_db))
         sm.add_widget(CardSearchScreen(card_db=self._card_db))
         sm.add_widget(ImportExportScreen(deck_manager=self._dm, card_db=self._card_db))
+        sm.add_widget(ResourcePacksScreen())
         sm.add_widget(SettingsScreen(app_settings=self._app_settings))
 
         return sm

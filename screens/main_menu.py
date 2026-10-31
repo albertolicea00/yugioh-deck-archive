@@ -27,6 +27,7 @@ MENU_ENTRIES = [
     {"id": "create", "label": "New Deck"},
     {"id": "search", "label": "Card Search"},
     {"id": "import", "label": "Import / Export"},
+    {"id": "resource_packs", "label": "Resources"},
     {"id": "settings", "label": "Settings"},
 ]
 
@@ -208,6 +209,8 @@ class MainMenuScreen(Screen):
             self.manager.current = "card_search"
         elif destination == "import":
             self.manager.current = "import_export"
+        elif destination == "resource_packs":
+            self.manager.current = "resource_packs"
         elif destination == "settings":
             self.manager.current = "settings"
 
