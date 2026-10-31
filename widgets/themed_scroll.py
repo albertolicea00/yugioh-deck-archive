@@ -1,4 +1,4 @@
-"""Themed ScrollView — rounded gold scrollbar matching the Egyptian UI."""
+"""Themed ScrollView — rounded gold scrollbar drawn outside the scroll area."""
 
 from kivy.uix.scrollview import ScrollView
 from kivy.graphics import Color, RoundedRectangle, InstructionGroup
@@ -7,9 +7,9 @@ from kivy.clock import Clock
 from theme import GOLD_DIM, DARK_PANEL_EDGE, scaled
 
 
-SCROLLBAR_WIDTH = scaled(8)
-SCROLLBAR_RADIUS = scaled(4)
-SCROLLBAR_MARGIN = scaled(3)
+SCROLLBAR_WIDTH = scaled(6)
+SCROLLBAR_RADIUS = scaled(3)
+SCROLLBAR_GAP = scaled(6)
 SCROLLBAR_COLOR = GOLD_DIM[:3]
 SCROLLBAR_TRACK = DARK_PANEL_EDGE[:3]
 
@@ -19,13 +19,21 @@ class ThemedScroll(ScrollView):
         kwargs.setdefault("scroll_type", ["content"])
         super().__init__(**kwargs)
         self.bar_width = 0
-        self._sb_group = InstructionGroup()
-        self.canvas.add(self._sb_group)
+        self._sb_group = None
         self._bar_opacity = 0
         self._fade_event = None
+        self._redraw_event = None
+        self._parent_bound = False
         self.bind(scroll_y=self._on_scroll)
         self.bind(size=self._schedule_redraw, pos=self._schedule_redraw)
-        self._redraw_event = None
+        self.bind(parent=self._on_parent)
+
+    def _on_parent(self, *_):
+        if self.parent and not self._parent_bound:
+            self._sb_group = InstructionGroup()
+            self.parent.canvas.after.add(self._sb_group)
+            self._parent_bound = True
+            self.parent.bind(size=self._schedule_redraw, pos=self._schedule_redraw)
 
     def _schedule_redraw(self, *_):
         if self._redraw_event:
@@ -45,6 +53,8 @@ class ThemedScroll(ScrollView):
 
     def _do_redraw(self, *_):
         self._redraw_event = None
+        if not self._sb_group:
+            return
         self._sb_group.clear()
 
         if not self.children:
@@ -56,29 +66,29 @@ class ThemedScroll(ScrollView):
             return
 
         bar_w = SCROLLBAR_WIDTH
-        margin = SCROLLBAR_MARGIN
+        gap = SCROLLBAR_GAP
         radius = SCROLLBAR_RADIUS
         opacity = self._bar_opacity
 
-        track_x = self.right - bar_w - margin
-        track_y = self.y + margin
-        track_h = view_h - 2 * margin
+        track_x = self.right + gap
+        track_y = self.y + scaled(4)
+        track_h = view_h - scaled(8)
 
         if track_h <= 0:
             return
 
         ratio = view_h / content_h
-        thumb_h = max(scaled(24), track_h * ratio)
+        thumb_h = max(scaled(20), track_h * ratio)
         scroll_range = track_h - thumb_h
         thumb_y = track_y + scroll_range * self.scroll_y
 
-        self._sb_group.add(Color(*SCROLLBAR_TRACK, 0.25 * opacity))
+        self._sb_group.add(Color(*SCROLLBAR_TRACK, 0.08 * opacity))
         self._sb_group.add(RoundedRectangle(
             pos=(track_x, track_y),
             size=(bar_w, track_h),
             radius=[radius],
         ))
-        self._sb_group.add(Color(*SCROLLBAR_COLOR, 0.6 * opacity))
+        self._sb_group.add(Color(*SCROLLBAR_COLOR, 0.18 * opacity))
         self._sb_group.add(RoundedRectangle(
             pos=(track_x, thumb_y),
             size=(bar_w, thumb_h),
