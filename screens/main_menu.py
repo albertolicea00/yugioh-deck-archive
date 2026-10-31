@@ -124,19 +124,6 @@ class MainMenuScreen(Screen):
 
         scroll.bind(scroll_y=self._on_menu_scroll)
 
-        self._top_grad = Widget(
-            size_hint=(1, None),
-            height=self._fade_h,
-            pos_hint={"x": 0},
-        )
-        self._bot_grad = Widget(
-            size_hint=(1, None),
-            height=self._fade_h,
-            pos_hint={"x": 0},
-        )
-        column.add_widget(self._top_grad)
-        column.add_widget(self._bot_grad)
-
         title_box = BoxLayout(
             orientation="vertical",
             size_hint=(1, None),
@@ -275,38 +262,6 @@ class MainMenuScreen(Screen):
 
             btn.opacity = max(0, min(1, visible))
 
-        self._draw_grad(self._top_grad, top_edge, fade_h, going_up=True)
-        self._draw_grad(self._bot_grad, bot_edge, fade_h, going_up=False)
-
-    def _draw_grad(self, w, edge_y, fade_h, going_up):
-        w.canvas.clear()
-        steps = 12
-        step_h = fade_h / steps
-        bg = (0.06, 0.04, 0.03)
-        max_a = 0.25
-
-        _, wy = w.parent.to_window(0, 0)
-
-        if going_up:
-            w.y = w.parent.y + (edge_y - wy) - fade_h
-            for i in range(steps):
-                a = ((i + 1) / steps) * max_a
-                with w.canvas:
-                    Color(*bg, a)
-                    Rectangle(
-                        pos=(w.x, w.y + step_h * i),
-                        size=(w.width, step_h + 1),
-                    )
-        else:
-            w.y = w.parent.y + (edge_y - wy)
-            for i in range(steps):
-                a = (1 - i / steps) * max_a
-                with w.canvas:
-                    Color(*bg, a)
-                    Rectangle(
-                        pos=(w.x, w.y + step_h * i),
-                        size=(w.width, step_h + 1),
-                    )
 
     def _navigate(self, destination):
         if destination == "games":
