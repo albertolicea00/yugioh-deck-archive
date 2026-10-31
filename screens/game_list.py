@@ -114,7 +114,7 @@ class GameListScreen(Screen):
 
         w = Window.width
         avail = w * TILE_BASE_RATIO
-        min_w = max(550, int(w * 0.30))
+        min_w = max(550, int(w * 0.20))
         self._grid.cols = max(1, int(avail / min_w))
         self._rebuild_grid()
 
