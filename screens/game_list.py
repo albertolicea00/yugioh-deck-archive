@@ -19,7 +19,7 @@ from theme import (
     FONT_SIZE_TITLE, FONT_SIZE_LIST, FONT_SIZE_SMALL, menu_font,
 )
 
-TILE_MIN_WIDTH = scaled(220)
+TILE_BASE_RATIO = 0.94
 
 
 class GameListScreen(Screen):
@@ -49,7 +49,7 @@ class GameListScreen(Screen):
             orientation="vertical",
             size_hint=(0.94, 0.94),
             pos_hint={"center_x": 0.5, "center_y": 0.5},
-            spacing=scaled(8),
+            spacing=8,
         )
 
         face = menu_font()
@@ -89,9 +89,9 @@ class GameListScreen(Screen):
     def _on_resize(self, window, size):
         w, h = size
         self._bg.source = BG_VERTICAL if h >= w else BG_HORIZONTAL
-        avail = w * 0.94 - scaled(12)
-        cols = max(1, int(avail / TILE_MIN_WIDTH))
-        cols = min(cols, 4)
+        avail = w * TILE_BASE_RATIO
+        min_w = max(550, int(w * 0.20))
+        cols = max(1, int(avail / min_w))
         if self._grid.cols != cols:
             self._grid.cols = cols
             if self._games:
@@ -112,8 +112,10 @@ class GameListScreen(Screen):
             ))
             return
 
-        avail = Window.width * 0.94 - scaled(12)
-        self._grid.cols = max(1, min(4, int(avail / TILE_MIN_WIDTH)))
+        w = Window.width
+        avail = w * TILE_BASE_RATIO
+        min_w = max(550, int(w * 0.30))
+        self._grid.cols = max(1, int(avail / min_w))
         self._rebuild_grid()
 
     def _rebuild_grid(self):

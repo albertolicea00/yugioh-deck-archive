@@ -26,7 +26,8 @@ class GameTile(ButtonBehavior, FloatLayout):
         self._badge_bg = None
         super().__init__(**kwargs)
         self.size_hint = (1, None)
-        self.height = scaled(80)
+        from kivy.core.window import Window
+        self.height = max(60, int(Window.height * 0.06))
         self.padding = [scaled(12), scaled(8)]
 
         self._draw_bg()
