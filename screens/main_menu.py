@@ -12,6 +12,7 @@ from kivy.uix.video import Video
 from kivy.graphics import Color, Rectangle
 from kivy.core.window import Window
 from kivy.core.audio import SoundLoader
+from kivy.clock import Clock
 
 from widgets.stone_button import StoneButton
 from kivy.uix.scrollview import ScrollView
@@ -68,7 +69,7 @@ class MainMenuScreen(Screen):
 
         face = menu_font()
 
-        title = Label(
+        self._title_label = Label(
             text="Yu-Gi-Oh!",
             font_size=scaled(122),
             color=TEXT_PRIMARY,
@@ -77,9 +78,9 @@ class MainMenuScreen(Screen):
             height=scaled(38),
         )
         if face:
-            title.font_name = face
+            self._title_label.font_name = face
 
-        subtitle = Label(
+        self._subtitle_label = Label(
             text="Deck Archive",
             font_size=scaled(40),
             color=TEXT_PRIMARY,
@@ -88,7 +89,7 @@ class MainMenuScreen(Screen):
             height=scaled(44),
         )
         if face:
-            subtitle.font_name = face
+            self._subtitle_label.font_name = face
 
         self._top_margin = scaled(50)
         self._title_zone = scaled(132)
@@ -122,7 +123,8 @@ class MainMenuScreen(Screen):
         scroll.add_widget(btn_list)
         column.add_widget(scroll)
 
-        scroll.bind(scroll_y=self._on_menu_scroll)
+        scroll.bind(scroll_y=self._on_menu_scroll,
+                    size=lambda *_: self._on_menu_scroll())
 
         title_box = BoxLayout(
             orientation="vertical",
@@ -132,8 +134,8 @@ class MainMenuScreen(Screen):
             spacing=scaled(10),
             padding=[0, self._top_margin + scaled(20), 0, 0],
         )
-        title_box.add_widget(title)
-        title_box.add_widget(subtitle)
+        title_box.add_widget(self._title_label)
+        title_box.add_widget(self._subtitle_label)
         self._title_box = title_box
         column.add_widget(title_box)
 
@@ -151,6 +153,7 @@ class MainMenuScreen(Screen):
 
         column.width = MAX_COLUMN_WIDTH
         column.bind(parent=self._clamp_width)
+        column.bind(size=lambda *_: self._deferred_layout())
         self._root.bind(size=lambda *_: self._clamp_width())
 
         self._root.add_widget(column)
@@ -158,7 +161,7 @@ class MainMenuScreen(Screen):
         self.add_widget(self._root)
 
         Window.bind(size=self._on_window_resize)
-        self._update_top_margin(Window.height)
+        Clock.schedule_once(self._deferred_layout, 0)
 
     def _use_video(self):
         if not self._app_settings:
@@ -171,6 +174,7 @@ class MainMenuScreen(Screen):
         return self._app_settings.get("background_music", True) and os.path.exists(MENU_BGM)
 
     def on_enter(self):
+        Clock.schedule_once(self._deferred_layout, 0)
         if self._use_video():
             self._start_video()
         else:
@@ -229,8 +233,13 @@ class MainMenuScreen(Screen):
     def _clamp_width(self, *_):
         if not hasattr(self, "_column") or not self._column.parent:
             return
-        parent_w = self._column.parent.width
-        self._column.width = min(MAX_COLUMN_WIDTH, parent_w * 0.85)
+        pw = self._column.parent.width
+        ph = self._column.parent.height or Window.height
+        if ph >= pw:
+            col_w = int(pw * 0.78)
+        else:
+            col_w = int(pw * 0.40)
+        self._column.width = min(col_w, int(ph * 0.45))
 
     def _on_menu_scroll(self, *_):
         fade_h = self._fade_h
@@ -238,12 +247,18 @@ class MainMenuScreen(Screen):
         if not tb.parent:
             return
 
+        content_h = self._btn_list.height
+        view_h = self._scroll.height
+        if content_h <= view_h:
+            for btn in self._btn_list.children:
+                btn.opacity = 1
+            return
+
         _, title_bot = tb.to_window(0, tb.y)
-        top_edge = title_bot - scaled(30)
+        top_edge = title_bot - int(Window.height * 0.02)
 
         for btn in self._btn_list.children:
             _, btn_top = btn.to_window(0, btn.top)
-            btn_h = max(btn.height, 1)
 
             if btn_top <= top_edge:
                 btn.opacity = 1
@@ -267,14 +282,43 @@ class MainMenuScreen(Screen):
         elif destination == "settings":
             self.manager.current = "settings"
 
+    def _deferred_layout(self, *_):
+        self._clamp_width()
+        self._update_top_margin(Window.height)
+        self._on_menu_scroll()
+
     def _update_top_margin(self, h):
-        margin = max(scaled(50), int(h * 0.08))
-        self._title_box.height = scaled(112) + margin
-        self._title_box.padding = [0, margin + scaled(20), 0, 0]
-        self._btn_list.padding = [
-            0, margin + self._title_zone + scaled(20),
-            0, scaled(10),
-        ]
+        col_w = self._column.width or int(h * 0.4)
+
+        title_fs = min(int(h * 0.14), int(col_w * 0.32))
+        self._title_label.font_size = max(40, title_fs)
+        self._title_label.height = int(title_fs * 0.31)
+
+        sub_fs = min(int(h * 0.05), int(col_w * 0.10))
+        self._subtitle_label.font_size = max(16, sub_fs)
+        self._subtitle_label.height = int(sub_fs * 1.1)
+
+        sp = int(h * 0.006)
+        title_zone = self._title_label.height + self._subtitle_label.height + sp
+        self._title_zone = title_zone
+        self._title_box.spacing = sp
+
+        self._fade_h = int(h * 0.08)
+
+        btn_h = int(h * 0.065)
+        for btn in self._btn_list.children:
+            btn.height = btn_h
+            btn.font_size = int(btn_h * 0.38)
+
+        margin = int(h * 0.10)
+        pad_top = int(h * 0.012)
+        box_h = title_zone + margin + pad_top
+        self._title_box.height = box_h
+        self._title_box.padding = [0, margin + pad_top, 0, 0]
+
+        btn_gap = int(h * 0.025)
+        self._btn_list.padding = [0, margin + title_zone + btn_gap, 0, int(h * 0.006)]
+        self._btn_list.spacing = int(h * 0.012)
 
     def _on_window_resize(self, window, size):
         w, h = size
@@ -282,6 +326,7 @@ class MainMenuScreen(Screen):
         self._bg.source = BG_VERTICAL if portrait else BG_HORIZONTAL
         if self._video and self._video.state == "play":
             self._video.source = VIDEO_VERTICAL if portrait else VIDEO_HORIZONTAL
+        self._clamp_width()
         self._update_top_margin(h)
 
     def show_message(self, text):

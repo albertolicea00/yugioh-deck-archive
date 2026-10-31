@@ -47,9 +47,10 @@ class StoneButton(ButtonBehavior, BoxLayout):
         self.add_widget(self._label)
 
         self.bind(text=self._on_text)
+        self.bind(font_size=self._on_font_size)
         self.bind(state=self._on_state)
         self.bind(hovered=self._on_hover_change)
-        self.bind(pos=self._update_bg, size=self._update_bg)
+        self.bind(pos=self._update_bg, size=self._on_size)
 
         Window.bind(mouse_pos=self._on_mouse_pos)
 
@@ -63,6 +64,13 @@ class StoneButton(ButtonBehavior, BoxLayout):
                 texture=tex, pos=self.pos, size=self.size,
             )
 
+    def _on_size(self, *_):
+        if self._bg_rect:
+            self._bg_rect.pos = self.pos
+            self._bg_rect.size = self.size
+        h = self.height
+        self.padding = [max(4, int(h * 0.10)), max(2, int(h * 0.05))]
+
     def _update_bg(self, *_):
         if self._bg_rect:
             self._bg_rect.pos = self.pos
@@ -70,6 +78,9 @@ class StoneButton(ButtonBehavior, BoxLayout):
 
     def _on_text(self, *_):
         self._label.text = self.text
+
+    def _on_font_size(self, *_):
+        self._label.font_size = self.font_size
 
     def _on_mouse_pos(self, window, pos):
         inside = self.collide_point(*self.to_widget(*pos))
