@@ -158,6 +158,7 @@ class MainMenuScreen(Screen):
         self.add_widget(self._root)
 
         Window.bind(size=self._on_window_resize)
+        self._update_top_margin(Window.height)
 
     def _use_video(self):
         if not self._app_settings:
@@ -277,12 +278,22 @@ class MainMenuScreen(Screen):
         elif destination == "settings":
             self.manager.current = "settings"
 
+    def _update_top_margin(self, h):
+        margin = max(scaled(50), int(h * 0.08))
+        self._title_box.height = scaled(112) + margin
+        self._title_box.padding = [0, margin + scaled(20), 0, 0]
+        self._btn_list.padding = [
+            0, margin + self._title_zone + self._fade_h,
+            0, self._status_h + self._fade_h,
+        ]
+
     def _on_window_resize(self, window, size):
         w, h = size
         portrait = h >= w
         self._bg.source = BG_VERTICAL if portrait else BG_HORIZONTAL
         if self._video and self._video.state == "play":
             self._video.source = VIDEO_VERTICAL if portrait else VIDEO_HORIZONTAL
+        self._update_top_margin(h)
 
     def show_message(self, text):
         self._status.text = text
