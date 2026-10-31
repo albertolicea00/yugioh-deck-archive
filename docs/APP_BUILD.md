@@ -21,7 +21,7 @@ pip install pyinstaller
 
 pyinstaller --onefile --windowed \
   --name "YGO Deck Manager" \
-  --icon assets/icons/app-icon.png \
+  --icon assets/icons/app-icon.ico \
   --add-data "assets:assets" \
   --add-data "theme:theme" \
   main.py

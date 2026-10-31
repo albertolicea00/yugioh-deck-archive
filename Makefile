@@ -1,4 +1,4 @@
-.PHONY: run install db-en db-es convert validate clean lint
+.PHONY: run install db-en db-es convert validate icons clean lint
 
 PYTHON ?= python
 PIP ?= pip
@@ -19,6 +19,9 @@ convert:
 
 validate:
 	$(PYTHON) scripts/deck-validate.py
+
+icons:
+	$(PYTHON) scripts/generate-icons.py
 
 lint:
 	$(PYTHON) -m py_compile main.py
