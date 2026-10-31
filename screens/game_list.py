@@ -72,7 +72,7 @@ class GameListScreen(Screen):
             cols=2,
             size_hint_y=None,
             spacing=scaled(10),
-            padding=[scaled(6), scaled(6)],
+            padding=[scaled(8), scaled(8), scaled(20), scaled(8)],
         )
         self._grid.bind(minimum_height=self._grid.setter("height"))
         scroll.add_widget(self._grid)

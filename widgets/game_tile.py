@@ -27,6 +27,7 @@ class GameTile(ButtonBehavior, FloatLayout):
         super().__init__(**kwargs)
         self.size_hint = (1, None)
         self.height = scaled(80)
+        self.padding = [scaled(12), scaled(8)]
 
         self._draw_bg()
 
@@ -41,6 +42,8 @@ class GameTile(ButtonBehavior, FloatLayout):
             bold=not face,
             size_hint=(1, 1),
             pos_hint={"center_x": 0.5, "center_y": 0.5},
+            shorten=True,
+            shorten_from="right",
         )
         if face:
             self._name_label.font_name = face
