@@ -19,7 +19,7 @@ def write_json(path, deck):
 # --- YDK ---
 
 def json_to_ydk(deck):
-    lines = ["#created by yugioh-deck-manager", "#main"]
+    lines = ["#created by@albertolicea00", "#main"]
     for c in deck.get("main", []):
         lines.append(str(c))
     lines.append("#extra")

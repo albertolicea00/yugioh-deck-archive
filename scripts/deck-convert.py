@@ -110,11 +110,17 @@ def count_cards(cards):
 # Converters
 # ══════════════════════════════════════
 
-def json_to_ydk(src):
+def _dest_path(src, ext, out_dir=None):
+    if out_dir:
+        return os.path.join(out_dir, os.path.splitext(os.path.basename(src))[0] + ext)
+    return os.path.splitext(src)[0] + ext
+
+
+def json_to_ydk(src, out_dir=None):
     deck = read_deck(src)
-    dst = os.path.splitext(src)[0] + ".ydk"
+    dst = _dest_path(src, ".ydk", out_dir)
     with open(dst, "w") as f:
-        f.write("#created by yugioh-deck-manager\n")
+        f.write("#created by@albertolicea00\n")
         f.write("#main\n")
         for c in deck.get("main", []):
             f.write(f"{c}\n")
@@ -126,9 +132,9 @@ def json_to_ydk(src):
             f.write(f"{c}\n")
 
 
-def json_to_ydke(src):
+def json_to_ydke(src, out_dir=None):
     deck = read_deck(src)
-    dst = os.path.splitext(src)[0] + ".ydke"
+    dst = _dest_path(src, ".ydke", out_dir)
 
     def encode(cards):
         return base64.b64encode(
@@ -142,9 +148,9 @@ def json_to_ydke(src):
         f.write(f"ydke://{main}!{extra}!{side}!\n")
 
 
-def json_to_txt(src):
+def json_to_txt(src, out_dir=None):
     deck = read_deck(src)
-    dst = os.path.splitext(src)[0] + ".txt"
+    dst = _dest_path(src, ".txt", out_dir)
     lines = []
     for label, key in [("Main Deck", "main"), ("Extra Deck", "extra"), ("Side Deck", "side")]:
         cards = deck.get(key, [])
@@ -159,9 +165,9 @@ def json_to_txt(src):
         f.write("\n".join(lines) + "\n")
 
 
-def json_to_cod(src):
+def json_to_cod(src, out_dir=None):
     deck = read_deck(src)
-    dst = os.path.splitext(src)[0] + ".cod"
+    dst = _dest_path(src, ".cod", out_dir)
     root = Element("cockatrice_deck", version="1")
     root.set("generator", "yugioh-deck-manager")
     for zone, key in [("main", "main"), ("extra", "extra"), ("side", "side")]:
@@ -177,7 +183,7 @@ def json_to_cod(src):
         f.write(xml + "\n")
 
 
-def ydk_to_json(src):
+def ydk_to_json(src, out_dir=None):
     main, extra, side = [], [], []
     current = None
     with open(src) as f:
@@ -193,7 +199,7 @@ def ydk_to_json(src):
                 continue
             elif current is not None and line.isdigit():
                 current.append(int(line))
-    dst = os.path.splitext(src)[0] + ".json"
+    dst = _dest_path(src, ".json", out_dir)
     write_deck(dst, {"main": main, "extra": extra, "side": side})
 
 
@@ -226,24 +232,26 @@ def collect_files(path, ext):
 # Batch processing
 # ══════════════════════════════════════
 
-def batch_convert(fmt, target, converter, src_ext):
+def batch_convert(fmt, target, converter, src_ext, out_dir=None):
+    if out_dir:
+        os.makedirs(out_dir, exist_ok=True)
     files = collect_files(target, src_ext)
     total = len(files)
     print(f"{YELLOW}Converting {total} files to {fmt.upper()}...{NC}")
     for i, f in enumerate(files, 1):
-        converter(f)
+        converter(f, out_dir=out_dir)
         if i % 50 == 0:
             print(f"  {DIM}{i}/{total}...{NC}")
     _save_names_cache()
     print(f"{GREEN}Converted: {total}{NC}")
 
 
-def do_export(fmt, target):
+def do_export(fmt, target, out_dir=None):
     if fmt == "all":
         for f, conv in CONVERTERS.items():
-            batch_convert(f, target, conv, ".json")
+            batch_convert(f, target, conv, ".json", out_dir=out_dir)
     else:
-        batch_convert(fmt, target, CONVERTERS[fmt], ".json")
+        batch_convert(fmt, target, CONVERTERS[fmt], ".json", out_dir=out_dir)
 
 
 # ══════════════════════════════════════
@@ -337,29 +345,30 @@ def main():
 
     cmd = args[0]
     target = args[1] if len(args) > 1 else DECKS_DIR
+    out_dir = args[2] if len(args) > 2 else None
 
     if cmd in ("ydk", "ydke", "txt", "cod", "all"):
         if os.path.isfile(target):
             if cmd == "all":
                 for conv in CONVERTERS.values():
-                    conv(target)
+                    conv(target, out_dir=out_dir)
             else:
-                CONVERTERS[cmd](target)
+                CONVERTERS[cmd](target, out_dir=out_dir)
             _save_names_cache()
             print(f"{GREEN}Done{NC}")
         else:
-            do_export(cmd, target)
+            do_export(cmd, target, out_dir=out_dir)
     elif cmd == "import":
         if os.path.isfile(target):
-            ydk_to_json(target)
+            ydk_to_json(target, out_dir=out_dir)
             print(f"{GREEN}Imported: {os.path.basename(target)}{NC}")
         elif os.path.isdir(target):
-            batch_convert("JSON", target, ydk_to_json, ".ydk")
+            batch_convert("JSON", target, ydk_to_json, ".ydk", out_dir=out_dir)
         else:
             print(f"{RED}Not found: {target}{NC}")
             sys.exit(1)
     else:
-        print(f"Usage: {sys.argv[0]} [ydk|ydke|txt|cod|all|import] [path]")
+        print(f"Usage: {sys.argv[0]} [ydk|ydke|txt|cod|all|import] [path] [out_dir]")
         print(f"       {sys.argv[0]}   (interactive menu)")
         sys.exit(1)
 
