@@ -33,6 +33,10 @@ The binary will be in `dist/`.
 
 ## Android
 
+> **Status: not set up.** The repository has no `buildozer.spec`, no `make` target for Android, no version or version code source, and no release signing. Nothing here has produced an APK. `keys/release.properties` is git-ignored but nothing reads it. The steps below are a starting point for setting Buildozer up, not a working build.
+>
+> When an Android build is added, name its outputs `yugioh-deck-manager-v<version>-<versionCode>-<debug|release>.apk` (and `.aab`), taking both numbers from a single version source, and document the real signing mechanism here.
+
 ### Prerequisites
 
 - Linux or macOS (Buildozer does not work on Windows natively)
@@ -84,7 +88,7 @@ buildozer -v android debug
 
 First build downloads SDK/NDK (~2GB). Subsequent builds are faster.
 
-The APK will be in `bin/`.
+Buildozer writes the APK to `bin/` with its own default name (`<package.name>-<version>-<arch>-debug.apk`).
 
 ### Deploy to Device
 

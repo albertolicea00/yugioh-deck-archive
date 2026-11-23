@@ -66,7 +66,7 @@ pip install -r requirements.txt && python main.py
 
 - [docs/APP_ARCHITECTURE.md](./docs/APP_ARCHITECTURE.md) — App architecture, validation rules, card type flags
 - [docs/APP_SETUP.md](./docs/APP_SETUP.md) — App install and run guide
-- [docs/APP_BUILD.md](./docs/APP_BUILD.md) — Build for Android, iOS, desktop
+- [docs/APP_BUILD.md](./docs/APP_BUILD.md) — Build for desktop; Android and iOS builds are not set up yet
 - [decks/README.md](./decks/README.md) — Full index with links to every deck
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — Deck file formats, passcode system, Konami apps, APIs and conversion
 - [CHANGELOG.md](./CHANGELOG.md) — Version history
