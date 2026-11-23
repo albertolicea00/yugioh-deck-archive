@@ -5,6 +5,8 @@ import os
 
 from kivy.metrics import sp, dp
 
+from core.paths import DATA_DIR
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
 ASSETS_DIR = os.path.join(ROOT_DIR, "assets")
@@ -20,7 +22,7 @@ MENU_BGM = os.path.join(ASSETS_DIR, "sounds", "menu-bgm.mp3")
 PAPYRUS_PATH = "/System/Library/Fonts/Supplemental/Papyrus.ttc"
 
 # UI scale factor — loaded once at import from settings file
-_SETTINGS_PATH = os.path.join(ROOT_DIR, "data", "settings.json")
+_SETTINGS_PATH = os.path.join(DATA_DIR, "settings.json")
 _UI_SCALE = 1.0
 if os.path.exists(_SETTINGS_PATH):
     try:

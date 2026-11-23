@@ -8,10 +8,12 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
+from core.paths import USER_DIR, DATA_DIR
+
 REPO_DECKS_DIR = os.path.join(ROOT_DIR, "decks")
-USER_DECKS_DIR = os.path.join(ROOT_DIR, "user_decks")
-CARD_DB_PATH = os.path.join(ROOT_DIR, "data", "cards.cdb")
-CACHE_DIR = os.path.join(ROOT_DIR, "data", "cache")
+USER_DECKS_DIR = os.path.join(USER_DIR, "user_decks")
+CARD_DB_PATH = os.path.join(DATA_DIR, "cards.cdb")
+CACHE_DIR = os.path.join(DATA_DIR, "cache")
 
 os.environ.setdefault("KIVY_VIDEO", "ffpyplayer")
 
@@ -52,7 +54,7 @@ class DeckManagerApp(App):
         Window.minimum_width = 480
         Window.minimum_height = 820
 
-        settings_path = os.path.join(ROOT_DIR, "data", "settings.json")
+        settings_path = os.path.join(DATA_DIR, "settings.json")
         self._app_settings = AppSettings(settings_path)
 
         self._dm = DeckManager(REPO_DECKS_DIR, USER_DECKS_DIR)

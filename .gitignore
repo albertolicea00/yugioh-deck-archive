@@ -1,5 +1,7 @@
 # Workspace
 .workspace/
+.venv/
+.venv-build/
 
 # Assets (deck-related, not ready yet)
 # assets/ is now tracked (app UI assets)

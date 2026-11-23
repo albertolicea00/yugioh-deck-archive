@@ -146,8 +146,8 @@ class ResourcePacksScreen(Screen):
 
     def _check_status(self):
         import os
-        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        db_path = os.path.join(root, "data", "cards.cdb")
+        from core.paths import DATA_DIR
+        db_path = os.path.join(DATA_DIR, "cards.cdb")
         if os.path.exists(db_path):
             size_mb = os.path.getsize(db_path) / (1024 * 1024)
             self._info.text = f"Card database: installed ({size_mb:.1f} MB)"
@@ -162,8 +162,8 @@ class ResourcePacksScreen(Screen):
         import os
         import threading
 
-        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        data_dir = os.path.join(root, "data")
+        from core.paths import DATA_DIR
+        data_dir = DATA_DIR
         os.makedirs(data_dir, exist_ok=True)
         db_path = os.path.join(data_dir, "cards.cdb")
 
