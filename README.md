@@ -62,7 +62,7 @@ Cross-platform deck manager app (mobile + desktop) built with Kivy. Browse, crea
 pip install -r requirements.txt && python main.py
 ```
 
-`make dmg` builds a macOS disk image, `dist/yugioh-deck-manager-v<version>-<versionCode>-release.dmg`, with the version taken from the `VERSION` file. The app is ad-hoc signed, not notarized: open it the first time with right-click → **Open**. See [docs/APP_BUILD.md](./docs/APP_BUILD.md).
+`make dmg` builds a macOS disk image, `dist/yugioh-deck-manager-v<version>-<versionCode>-release.dmg`, with the version taken from the `VERSION` file. The app is ad-hoc signed, not notarized: on another Mac, open it the first time through System Settings → Privacy & Security → **Open Anyway** (macOS 15+) or right-click → **Open** (macOS 14 and earlier). See [docs/APP_BUILD.md](./docs/APP_BUILD.md).
 
 ## Documentation
 

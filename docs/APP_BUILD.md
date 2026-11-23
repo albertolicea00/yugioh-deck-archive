@@ -38,7 +38,13 @@ This produces `dist/yugioh-deck-manager-v<VERSION_NAME>-<VERSION_CODE>-release.d
 
 Bundled resources: `assets/` and the `decks/**/*.json` files. When the app runs from the bundle it writes user data (`data/` with settings and the card database, and `user_decks/`) to `~/Library/Application Support/YGO Deck Archive/` instead of next to the code (see `core/paths.py`). Running from source is unchanged.
 
-**First launch (Gatekeeper):** because the app is only ad-hoc signed, macOS blocks a double-click on a downloaded copy. Right-click the app → **Open**, then confirm; or allow it in System Settings → Privacy & Security. Later launches open normally.
+**First launch on another Mac (Gatekeeper).** The app is ad-hoc signed but not notarized, so macOS blocks a copy that was downloaded (web, AirDrop, chat apps) with "cannot verify the developer". To open it:
+
+- **macOS 15 Sequoia or later:** try to open it once, then System Settings → Privacy & Security → **Open Anyway**. Right-click → Open no longer bypasses the check.
+- **macOS 14 or earlier:** right-click the app → **Open**, then confirm.
+- **Any version, from Terminal:** `xattr -dr com.apple.quarantine "/Applications/YGO Deck Archive.app"`
+
+The Mac that built it opens it directly. Only a Developer ID certificate plus Apple notarization (paid Apple Developer Program) removes the warning.
 
 ### Windows
 
