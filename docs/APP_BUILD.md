@@ -6,28 +6,51 @@
 
 ## Desktop (macOS / Windows / Linux)
 
-Desktop runs directly with Python — no build step required.
+Desktop runs directly with Python — no build step required to develop.
 
 ```bash
 python main.py
 ```
 
-### Packaging as Standalone Executable
+### Version
 
-Use PyInstaller to create a distributable binary:
+`VERSION` at the repository root is the single version source:
 
-```bash
-pip install pyinstaller
-
-pyinstaller --onefile --windowed \
-  --name "YGO Deck Archive" \
-  --icon assets/icons/app-icon.ico \
-  --add-data "assets:assets" \
-  --add-data "theme:theme" \
-  main.py
+```
+VERSION_NAME=0.1.0
+VERSION_CODE=1
 ```
 
-The binary will be in `dist/`.
+`VERSION_NAME` is the user-facing version; `VERSION_CODE` is an integer bumped on every release. `make version` prints both and stops if the file or either value is missing; every build target runs it first.
+
+### macOS disk image
+
+```bash
+make dmg
+```
+
+This produces `dist/yugioh-deck-manager-v<VERSION_NAME>-<VERSION_CODE>-release.dmg` containing `YGO Deck Archive.app` and an `/Applications` shortcut. Steps:
+
+1. Creates `.venv-build/` (git-ignored) with PyInstaller and `requirements.txt`, using `$(PYTHON)`. That Python must be built with a shared library (pyenv and Homebrew builds are).
+2. Builds the `.app` from `packaging/yugioh-deck-manager.spec` into `build/macos/` (`make app` stops here). Bundle id `com.albertolicea00.yugiohdeckmanager`; `CFBundleShortVersionString` is `VERSION_NAME` and `CFBundleVersion` is `VERSION_CODE`. The icon is `assets/icons/app-icon-macos-1024.png`.
+3. Signs the bundle **ad-hoc** (`codesign --force --deep -s -`). There is no Apple Developer ID, so the app is not notarized.
+4. Creates the image with `hdiutil create ... -format UDZO` and checks it with `hdiutil verify`.
+
+Bundled resources: `assets/` and the `decks/**/*.json` files. When the app runs from the bundle it writes user data (`data/` with settings and the card database, and `user_decks/`) to `~/Library/Application Support/YGO Deck Archive/` instead of next to the code (see `core/paths.py`). Running from source is unchanged.
+
+**First launch (Gatekeeper):** because the app is only ad-hoc signed, macOS blocks a double-click on a downloaded copy. Right-click the app → **Open**, then confirm; or allow it in System Settings → Privacy & Security. Later launches open normally.
+
+### Windows
+
+Not built by the Makefile. The `.exe` must be built on Windows with the same spec (it uses `assets/icons/app-icon.ico` and skips the macOS bundle step):
+
+```bat
+set VERSION_NAME=0.1.0
+set VERSION_CODE=1
+pyinstaller --noconfirm packaging/yugioh-deck-manager.spec
+```
+
+Linux packages are not provided.
 
 ---
 

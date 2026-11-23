@@ -39,6 +39,7 @@ __pycache__/
 dist/
 build/
 *.spec
+!packaging/*.spec
 
 # Signing & secrets
 *.keystore
