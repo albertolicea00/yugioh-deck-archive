@@ -56,7 +56,7 @@ $(BUILD_STAMP): requirements.txt
 # macOS .app bundle, ad-hoc signed (no Developer ID, not notarized).
 app: version $(BUILD_STAMP)
 	@test "$$(uname)" = Darwin || { echo "make app/dmg only runs on macOS"; exit 1; }
-	VERSION_NAME=$(VERSION_NAME) VERSION_CODE=$(VERSION_CODE) \
+	KIVY_LOG_MODE=PYTHON VERSION_NAME=$(VERSION_NAME) VERSION_CODE=$(VERSION_CODE) \
 		$(BUILD_PY) -m PyInstaller --noconfirm --clean \
 		--distpath $(MAC_BUILD)/dist --workpath $(MAC_BUILD)/work \
 		packaging/yugioh-deck-manager.spec
